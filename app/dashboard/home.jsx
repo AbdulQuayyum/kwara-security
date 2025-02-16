@@ -87,21 +87,12 @@ const Home = () => {
                             </Text>
                         </View>
                     </View>
-
-                    {/* Report Form */}
                     <View className="flex flex-col items-start w-full">
                         <View className="flex flex-col w-full gap-y-2">
                             <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
                                 Subject
                             </Text>
-                            <TextInput
-                                style={{ fontFamily: fonts.extralight }}
-                                placeholderTextColor="#0D0D0D"
-                                placeholder='Enter subject'
-                                className="w-full border rounded border-[#414141] text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary"
-                                value={formData.subject}
-                                onChangeText={(text) => handleChange("subject", text)}
-                            />
+                            <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder='Enter subject' className="w-full border rounded border-[#414141] text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" value={formData.subject} onChangeText={(text) => handleChange("subject", text)}/>
                         </View>
                     </View>
 

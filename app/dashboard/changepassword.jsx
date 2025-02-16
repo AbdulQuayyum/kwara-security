@@ -5,6 +5,7 @@ import axios from 'axios';
 import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 
 import { AuthContext } from '../../context/authcontext';
+import images from "../../assets/images/index";
 import { fonts } from "../../assets/fonts";
 import styles from "../../styles/main";
 
@@ -69,10 +70,11 @@ const ChangePassword = () => {
             <StatusBar style="auto" backgroundColor="#FFFFFF" />
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
                 <View className="flex flex-col items-start gap-y-6 w-full max-w-[500px] ">
-                    <View className="flex flex-row items-center justify-between w-full">
-                        <View className="flex flex-col items-start gap-y-2">
-                            <Text style={{ fontFamily: fonts.light }} className="text-[36px] font-[700] leading-[43px] text-[#0D0D0D]">Change Password</Text>
-                        </View>
+                    <TouchableOpacity onPress={() => { router.back() }} >
+                        <Image source={images.arrowleft} style={{ height: 30, width: 30 }} />
+                    </TouchableOpacity>
+                    <View className="flex flex-col items-start gap-y-2">
+                        <Text style={{ fontFamily: fonts.light }} className="text-[36px] font-[700] leading-[43px] text-[#0D0D0D]">Change Password</Text>
                     </View>
                     <View className="flex flex-col items-start w-full gap-y-4 ">
                         <View className="flex flex-col items-start w-full gap-y-2">
