@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     container: {
-        backgroundColor: "#1E1E1E",
+        backgroundColor: "#FFF",
         position: "absolute",
         bottom: 0,
         width: "100%",
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     activeNavItem: {
-        backgroundColor: "#FFB703",
+        backgroundColor: "#CCC",
         paddingVertical: 27
     },
     iconWrapper: {
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     activeDot: {
         width: 5,
         height: 5,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#000",
         borderRadius: 5,
         position: "absolute",
         bottom: -15,

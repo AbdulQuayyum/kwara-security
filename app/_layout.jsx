@@ -1,6 +1,8 @@
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 
+import { AuthProvider } from "../context/authcontext";
+
 import "../styles/index.css"
 
 export default function RootLayout() {
@@ -18,5 +20,9 @@ export default function RootLayout() {
   if (!fontsLoaded) {
     return null;
   }
-  return <Stack />;
+  return (
+    <AuthProvider>
+      <Stack />
+    </AuthProvider>
+  );
 }

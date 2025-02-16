@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
+import axios from 'axios';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 
+import { AuthContext } from '../context/authcontext';
 import images from "../assets/images/index"
 import { fonts } from "../assets/fonts";
 import styles from "../styles/main";
@@ -11,24 +13,51 @@ const Login = () => {
     const router = useRouter();
     const [values, setValues] = useState({ emailAddress: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState("");
+    const { authState, login } = useContext(AuthContext);
+
+    if (authState.isAuthenticated) {
+        router.replace("/dashboard/home");
+        return null;
+    }
+
 
     const handleChange = (field, value) => {
         setValues({ ...values, [field]: value });
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const { emailAddress, password } = values;
 
-        // if (!emailAddress || !password) {
-        //     setError("Please fill in all fields.");
-        //     return;
-        // }
+        if (!emailAddress || !password) {
+            setError("Please fill in all fields.");
+            return;
+        }
 
-        // setError("");
-        // console.log("Form submitted", values);
-        router.navigate("/dashboard/home")
+        setError("");
+
+        try {
+            const response = await axios.post('https://kwara-security-api-production.up.railway.app/v1/auth/signin', {
+                emailAddress,
+                password,
+            });
+
+            if (response.data.success) {
+                login(response.data.data.token);
+
+                Alert.alert("Success", response.data.message || "Logged in successfully!");
+                router.navigate("/dashboard/home");
+            } else {
+                Alert.alert("Error", response.data.error || "Failed to log in. Please try again.");
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            if (error.response) {
+                Alert.alert("Error", error.response.data.message || "Failed to log in. Please try again.");
+            } else {
+                Alert.alert("Error", "Failed to log in. Please check your connection and try again.");
+            }
+        }
     };
 
     return (
@@ -49,39 +78,27 @@ const Login = () => {
 
                     <View className="flex flex-col items-start w-full gap-y-6 ">
                         <View className="flex flex-col items-start w-full">
-                            <View className="relative flex flex-col w-full gap-y-2">
-                                <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder=' ' className="w-full border rounded border-[#414141] text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary peer transition-all appearance-none duration-500" value={values.emailAddress} onChangeText={(text) => handleChange("emailAddress", text)} />
-                                <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D] bg-[#FFF] absolute duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-4 peer-focus:px-2 peer-focus:text-[#8A8A8A] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-1">
+                            <View className="flex flex-col w-full gap-y-2">
+                                <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
                                     Email Address
                                 </Text>
+                                <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder=' ' className="w-full border rounded border-[#414141] text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" value={values.emailAddress} onChangeText={(text) => handleChange("emailAddress", text)} />
                             </View>
                         </View>
                         <View className="flex flex-col items-start w-full gap-y-2">
-                            <View className="relative flex flex-row items-center w-full gap-y-2">
-                                <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder=' ' className="w-full bg-transparent border rounded border-[#414141] text-[#0D0D0D] h-[60px] px-4 flex items-start focus:outline-none peer transition-all appearance-none duration-500" secureTextEntry={!showPassword} value={values.password} onChangeText={(text) => handleChange("password", text)} />
-                                <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D] bg-[#FFF] absolute duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-4 peer-focus:px-2 peer-focus:text-[#8A8A8A] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-1">
+                            <View className="flex flex-col w-full gap-y-2">
+                                <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
                                     Password
                                 </Text>
-                                <TouchableOpacity className="absolute top-1/3 right-4" onPress={() => setShowPassword(!showPassword)} >
-                                    {showPassword ? <Image source={images.eyeclose} style={{ height: 24, width: 24 }} /> : <Image source={images.eyeopen} style={{ height: 24, width: 24 }} />}
+                                <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder=' ' className="w-full bg-transparent border rounded border-[#414141] text-[#0D0D0D] h-[60px] px-4 flex items-start focus:outline-none" secureTextEntry={!showPassword} value={values.password} onChangeText={(text) => handleChange("password", text)} />
+                                <TouchableOpacity className="absolute top-12 right-4" onPress={() => setShowPassword(!showPassword)} >
+                                    <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
+                                        {showPassword ? "Hide" : "Show"}
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View className="flex flex-row items-center justify-between w-full">
-                            <TouchableOpacity onPress={() => setRememberMe(!rememberMe)} className="flex flex-row items-center gap-x-2">
-                                <View className="relative">
-                                    <View className={`appearance-none w-5 h-5 border-2 rounded-full relative cursor-pointer border-[#00B15F] ${rememberMe ? " bg-[#00B15F]" : " bg-transparent "}`}  >
-                                        {rememberMe && (
-                                            <Text style={{ color: "#0D0D0D", fontSize: 14, fontWeight: "bold", position: "absolute", top: -2, left: 3 }}>
-                                                ✓
-                                            </Text>
-                                        )}
-                                    </View>
-                                </View>
-                                <Text style={{ fontFamily: fonts.extralight }} className="text-[14px] font-[400] leading-[18px] text-[#0D0D0D]">
-                                    Remember me
-                                </Text>
-                            </TouchableOpacity>
+                        <View className="flex flex-row items-center justify-end w-full">
                             <TouchableOpacity onPress={() => { router.push("/auth/forgotpassword") }}>
                                 <Text style={{ fontFamily: fonts.extralight }} className="text-[14px] font-[400] leading-[18px] text-[#EC221F]">Forgot Password</Text>
                             </TouchableOpacity>
