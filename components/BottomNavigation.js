@@ -31,7 +31,7 @@ const BottomNavigation = () => {
                 inactiveIcon: images.inactivehome,
             },
             {
-                path: routes.profile,
+                path: routes.settings,
                 activeIcon: images.activeprofile,
                 inactiveIcon: images.inactiveprofile,
             },
@@ -53,7 +53,7 @@ const BottomNavigation = () => {
                 inactiveIcon: images.inactivehome,
             },
             {
-                path: routes.profile,
+                path: routes.settings,
                 activeIcon: images.activeprofile,
                 inactiveIcon: images.inactiveprofile,
             }

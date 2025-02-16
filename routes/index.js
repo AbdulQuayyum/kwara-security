@@ -1,6 +1,10 @@
 const home = "/dashboard/home"
-const profile = "/dashboard/profile"
+const settings = "/dashboard/settings"
 const cases = "/dashboard/cases"
 const users = "/dashboard/users"
 
-export default {home, profile, cases, users}
+const profile = "/dashboard/profile"
+const mycases = "/dashboard/mycases"
+const changepassword = "/dashboard/changepassword"
+
+export default { home, settings, profile, cases, users, mycases, changepassword }
