@@ -27,17 +27,48 @@ export const AuthProvider = ({ children }) => {
             );
 
             if (response.data.success) {
+                const userData = response.data.data;
                 setAuthState((prevState) => ({
                     ...prevState,
-                    user: response.data.data,
+                    user: userData,
                 }));
-                await AsyncStorage.setItem("user", JSON.stringify(response.data.data));
+                await AsyncStorage.setItem("user", JSON.stringify(userData));
             } else {
                 logout();
             }
         } catch (error) {
             console.error("Error fetching user profile:", error);
             logout();
+        }
+    };
+
+    const updateUserProfile = async (updatedProfile) => {
+        try {
+            const response = await axios.post(
+                "https://kwara-security-api-production.up.railway.app/v1/user/update-user-profile",
+                updatedProfile,
+                {
+                    headers: {
+                        Authorization: `Bearer ${authState.token}`,
+                    },
+                }
+            );
+
+            if (response.data.success) {
+                setAuthState((prevState) => ({
+                    ...prevState,
+                    user: { ...prevState.user, ...updatedProfile },
+                }));
+
+                await AsyncStorage.setItem("user", JSON.stringify({ ...authState.user, ...updatedProfile }));
+
+                return { success: true, message: "Profile updated successfully!" };
+            } else {
+                return { success: false, message: response.data.message || "Failed to update profile." };
+            }
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            return { success: false, message: "Failed to update profile. Please try again." };
         }
     };
 
@@ -84,7 +115,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ authState, login, logout }}>
+        <AuthContext.Provider value={{ authState, setAuthState, login, logout, updateUserProfile }}>
             {children}
         </AuthContext.Provider>
     );

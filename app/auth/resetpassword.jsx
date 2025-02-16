@@ -41,7 +41,7 @@ const ResetPassword = () => {
 
             if (response.data.success) {
                 Alert.alert("Success", "Your password has been reset successfully.");
-                router.navigate("/dashboard/home");
+                router.navigate("/");
             } else {
                 setError(response.data.message || "An error occurred. Please try again.");
             }

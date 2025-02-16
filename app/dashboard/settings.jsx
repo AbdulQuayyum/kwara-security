@@ -47,7 +47,7 @@ const Settings = () => {
                     <View className="flex flex-col items-start w-full">
                         <View className="flex flex-col items-start w-full gap-y-6">
                             <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[700] leading-[21px] text-[#0D0D0D]">Profile</Text>
-                            <TouchableOpacity className="flex flex-row items-center justify-between w-full" onPress={() => { router.push(routes.profile) }}>
+                            <TouchableOpacity className="flex flex-row items-center justify-between w-full" onPress={() => { router.push(routes.mycases) }}>
                                 <View className="flex flex-row items-center gap-x-4">
                                     <Image source={images.legal} style={{ height: 52, width: 52 }} />
                                     <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[600] leading-[21px] text-[#0D0D0D]">
@@ -56,7 +56,7 @@ const Settings = () => {
                                 </View>
                                 <Image source={images.carretright} style={{ height: 18, width: 18 }} />
                             </TouchableOpacity>
-                            <TouchableOpacity className="flex flex-row items-center justify-between w-full" onPress={() => { router.push(routes.profile) }}>
+                            <TouchableOpacity className="flex flex-row items-center justify-between w-full" onPress={() => { router.push(routes.changepassword) }}>
                                 <View className="flex flex-row items-center gap-x-4">
                                     <Image source={images.privacy} style={{ height: 52, width: 52 }} />
                                     <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[600] leading-[21px] text-[#0D0D0D]">
