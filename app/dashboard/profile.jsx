@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 
 import { AuthContext } from '../../context/authcontext';
 import images from "../../assets/images/index";
@@ -12,6 +12,7 @@ import styles from "../../styles/main";
 const Profile = () => {
     const router = useRouter();
     const { authState, updateUserProfile } = useContext(AuthContext);
+    const [isLoading, setIsLoading] = useState(false);
     const [fields, setFields] = useState({
         emailAddress: { value: authState?.user?.emailAddress || '', isEditing: false },
         name: { value: authState?.user?.name || '', isEditing: false },
@@ -86,6 +87,7 @@ const Profile = () => {
             ward: fields.ward.value,
             community: fields.community.value,
         };
+        setIsLoading(true);
 
         const result = await updateUserProfile(updatedProfile);
 
@@ -94,6 +96,7 @@ const Profile = () => {
         } else {
             Alert.alert("Error", result.message);
         }
+        setIsLoading(false);
     };
 
     return (
@@ -155,10 +158,12 @@ const Profile = () => {
                             </View>
                         ))}
                     </View>
-                    <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" onPress={handleUpdateProfile}>
-                        <Text style={{ fontFamily: fonts.light }} className="text-[#FFF] font-[600] leading-[21px] text-[16px]">
-                            Update Profile
-                        </Text>
+                    <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleUpdateProfile}>
+                        {isLoading ? (
+                            <ActivityIndicator color="#FFFFFF" />
+                        ) : (
+                            <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]"> Update Profile</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>

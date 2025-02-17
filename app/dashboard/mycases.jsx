@@ -2,8 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, DateTimePicker } from 'react-native';
-
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 import { AuthContext } from '../../context/authcontext';
 import images from "../../assets/images/index";
 import { fonts } from "../../assets/fonts";
@@ -14,8 +13,8 @@ const MyCases = () => {
     const { authState } = useContext(AuthContext);
     const [cases, setCases] = useState([]);
     const [editingCaseId, setEditingCaseId] = useState(null);
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [editForm, setEditForm] = useState({ subject: "", description: "", time: "" });
+    const [isLoading, setIsLoading] = useState(false);
+    const [editForm, setEditForm] = useState({ subject: "", description: "" });
 
     useEffect(() => {
         if (authState?.user?.userID) {
@@ -43,8 +42,7 @@ const MyCases = () => {
         setEditingCaseId(caseItem.caseID);
         setEditForm({
             subject: caseItem.subject,
-            description: caseItem.description,
-            time: caseItem.time,
+            description: caseItem.description
         });
     };
 
@@ -53,6 +51,7 @@ const MyCases = () => {
     };
 
     const handleEditSubmit = async (caseId) => {
+        setIsLoading(true);
         try {
             const response = await axios.post(
                 `https://kwara-security-api-production.up.railway.app/v1/user/cases/${caseId}/update`,
@@ -66,6 +65,8 @@ const MyCases = () => {
         } catch (error) {
             Alert.alert("Error", "Failed to update case");
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -98,31 +99,14 @@ const MyCases = () => {
                                         <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
                                             Description
                                         </Text>
-                                        <TextInput style={{ fontFamily: fonts.extralight }} placeholder="Description" value={editForm.description} onChangeText={(text) => handleEditChange("description", text)} multiline className="w-full border rounded border-[#414141] text-[#0D0D0D] py-2 bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" />
+                                        <TextInput style={{ fontFamily: fonts.extralight }} placeholder="Description" value={editForm.description} onChangeText={(text) => handleEditChange("description", text)} multiline className="w-full border rounded border-[#414141] h-[60px] text-[#0D0D0D] py-2 bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" />
                                     </View>
-                                    <View className="flex flex-col items-start w-full gap-y-2">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
-                                            Time of incident
-                                        </Text>
-                                        <TouchableOpacity className="w-full border rounded border-[#414141] text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-center justify-center" onPress={() => setShowDatePicker(true)}>
-                                            <Text style={{ fontFamily: fonts.extralight }}>{editForm.time.toLocaleString()}</Text>
-                                        </TouchableOpacity>
-                                        {showDatePicker && (
-                                            <DateTimePicker
-                                                value={editForm.time}
-                                                mode="datetime"
-                                                display="default"
-                                                onChange={(event, selectedDate) => {
-                                                    setShowDatePicker(false);
-                                                    if (selectedDate) {
-                                                        handleEditChange("time", selectedDate);
-                                                    }
-                                                }}
-                                            />
+                                    <TouchableOpacity className="flex h-[60px] items-center justify-center w-full py-2 rounded bg-primary" disabled={isLoading} onPress={() => handleEditSubmit(caseItem.caseID)}>
+                                        {isLoading ? (
+                                            <ActivityIndicator color="#FFFFFF" />
+                                        ) : (
+                                            <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]">Save</Text>
                                         )}
-                                    </View>
-                                    <TouchableOpacity className="flex items-center justify-center w-full py-2 rounded bg-primary" onPress={() => handleEditSubmit(caseItem.caseID)}>
-                                        <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF]">Save</Text>
                                     </TouchableOpacity>
                                 </View>
                             ) : (

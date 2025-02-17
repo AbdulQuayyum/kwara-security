@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, Image, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, View, Text, Image, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 
 import images from "../../assets/images/index"
 import { fonts } from "../../assets/fonts";
@@ -15,6 +15,7 @@ const CreateAccount = () => {
     const [dropdowns, setDropdowns] = useState({ state: false, lga: false, ward: false });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const [states, setStates] = useState([]);
     const [lgas, setLgas] = useState({});
 
@@ -47,11 +48,16 @@ const CreateAccount = () => {
     };
 
     const validatePhoneNumber = (text) => {
+        let formattedNumber = text;
+
         if (text.startsWith('+234') && text.length === 14) {
-            handleChange("phoneNumber", text);
+            formattedNumber = text;
         } else if (text.length === 11 && !text.startsWith('+234')) {
-            handleChange("phoneNumber", `+234${text}`);
+            formattedNumber = `+234${text}`;
+        } else {
+            formattedNumber = text;
         }
+        handleChange("phoneNumber", formattedNumber);
     };
 
     const validateNIN = (text) => {
@@ -71,16 +77,18 @@ const CreateAccount = () => {
             setError("Please fill in all fields.");
             return;
         }
+
         setError("");
+        setIsLoading(true);
 
         axios.post('https://kwara-security-api-production.up.railway.app/v1/auth/create-account', values)
             .then(response => {
                 if (response.data.success) {
-                    Alert.alert("Success", `${response.data.message} || Account created successfully! Please wait for admin verification.`);
+                    Alert.alert("Success", response.data.message || "Account created successfully! Please wait for admin verification.");
 
                     router.navigate("/");
                 } else {
-                    Alert.alert("Error", `${response.data.error} || Failed to create account. Please try again.`);
+                    Alert.alert("Error", response.data.error || "Failed to create account. Please try again.");
                 }
             })
             .catch(error => {
@@ -92,6 +100,8 @@ const CreateAccount = () => {
                     Alert.alert("Error", "Failed to create account. Please check your connection and try again.");
                 }
             });
+
+        setIsLoading(false);
     };
 
     return (
@@ -236,8 +246,12 @@ const CreateAccount = () => {
                     </View>
 
                     <View className="flex flex-col items-start w-full gap-y-4">
-                        <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" onPress={handleSubmit}  >
-                            <Text style={{ fontFamily: fonts.light }} className="text-[#FFF] font-[600] leading-[21px] text-[16px]">Sign Up</Text>
+                        <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleSubmit}  >
+                            {isLoading ? (
+                                <ActivityIndicator color="#FFFFFF" />
+                            ) : (
+                                <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]">Sign Up</Text>
+                            )}
                         </TouchableOpacity>
                         <View className="flex flex-row items-center justify-center w-full gap-x-2">
                             <Text style={{ fontFamily: fonts.extralight }} className="text-[14px] font-[400] leading-[18px] text-primary">Already have an account?</Text>

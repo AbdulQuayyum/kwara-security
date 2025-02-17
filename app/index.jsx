@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 
 import { AuthContext } from '../context/authcontext';
 import images from "../assets/images/index"
@@ -14,13 +14,13 @@ const Login = () => {
     const [values, setValues] = useState({ emailAddress: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const { authState, login } = useContext(AuthContext);
 
     if (authState.isAuthenticated) {
         router.replace("/dashboard/home");
         return null;
     }
-
 
     const handleChange = (field, value) => {
         setValues({ ...values, [field]: value });
@@ -35,6 +35,7 @@ const Login = () => {
         }
 
         setError("");
+        setIsLoading(true);
 
         try {
             const response = await axios.post('https://kwara-security-api-production.up.railway.app/v1/auth/signin', {
@@ -57,6 +58,8 @@ const Login = () => {
             } else {
                 Alert.alert("Error", "Failed to log in. Please check your connection and try again.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -112,8 +115,12 @@ const Login = () => {
                     </View>
 
                     <View className="flex flex-col items-start w-full gap-y-4">
-                        <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" onPress={handleSubmit}  >
-                            <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]">Log In</Text>
+                        <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleSubmit}  >
+                            {isLoading ? (
+                                <ActivityIndicator color="#FFFFFF" />
+                            ) : (
+                                <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]">Log In</Text>
+                            )}
                         </TouchableOpacity>
                         <View className="flex flex-row items-center justify-center w-full gap-x-2">
                             <Text style={{ fontFamily: fonts.extralight }} className="text-[14px] font-[400] leading-[18px] text-[#0D0D0D]">Don't have an account?</Text>

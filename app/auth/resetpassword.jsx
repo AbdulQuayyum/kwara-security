@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 
 import { fonts } from "../../assets/fonts";
@@ -13,6 +13,7 @@ const ResetPassword = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (field, value) => {
         setValues({ ...values, [field]: value });
@@ -31,6 +32,8 @@ const ResetPassword = () => {
         }
 
         setError("");
+        setIsLoading(true);
+
         const requestBody = {
             token,
             newPassword: password,
@@ -52,6 +55,8 @@ const ResetPassword = () => {
             } else {
                 setError("Failed to reset password. Please check your connection and try again.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -111,8 +116,12 @@ const ResetPassword = () => {
                             </Text>
                         ) : null}
                     </View>
-                    <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" onPress={handleSubmit}>
-                        <Text style={{ fontFamily: fonts.light }} className="text-[#FFF] font-[600] leading-[21px] text-[16px]">Update Password</Text>
+                    <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleSubmit}>
+                        {isLoading ? (
+                            <ActivityIndicator color="#FFFFFF" />
+                        ) : (
+                            <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]">Update Password</Text>
+                        )}
                     </TouchableOpacity>
                     <View className="flex flex-row items-center justify-center w-full gap-x-2">
                         <Text style={{ fontFamily: fonts.extralight }} className="text-[14px] font-[400] leading-[18px] text-primary">Remember your password?</Text>

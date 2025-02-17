@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 
 import images from "../../assets/images/index"
 import { fonts } from "../../assets/fonts";
@@ -12,18 +12,25 @@ const ForgotPassword = () => {
     const router = useRouter();
     const [values, setValues] = useState({ phoneNumber: "" });
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (field, value) => {
         setValues({ ...values, [field]: value });
     };
 
     const validatePhoneNumber = (text) => {
+        let formattedNumber = text;
+
         if (text.startsWith('+234') && text.length === 14) {
-            handleChange("phoneNumber", text);
+            formattedNumber = text;
         } else if (text.length === 11 && !text.startsWith('+234')) {
-            handleChange("phoneNumber", `+234${text}`);
+            formattedNumber = `+234${text}`;
+        } else {
+            formattedNumber = text;
         }
+        handleChange("phoneNumber", formattedNumber);
     };
+
 
     const handleSubmit = async () => {
         const { phoneNumber } = values;
@@ -33,8 +40,8 @@ const ForgotPassword = () => {
             return;
         }
 
-        setLoading(true);
         setError("");
+        setIsLoading(true);
 
         try {
             const response = await axios.post(
@@ -57,7 +64,7 @@ const ForgotPassword = () => {
                 Alert.alert("Error", "An unexpected error occurred. Please try again.");
             }
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -95,8 +102,12 @@ const ForgotPassword = () => {
                     </View>
 
                     <View className="flex flex-col items-start w-full gap-y-4">
-                        <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" onPress={handleSubmit}  >
-                            <Text style={{ fontFamily: fonts.light }} className="text-[#FFF] font-[600] leading-[21px] text-[16px]">Send Reset Link</Text>
+                        <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleSubmit}  >
+                            {isLoading ? (
+                                <ActivityIndicator color="#FFFFFF" />
+                            ) : (
+                                <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]">Send Reset Token</Text>
+                            )}
                         </TouchableOpacity>
                     </View>
                     <View className="flex flex-row items-center justify-center w-full gap-x-2">

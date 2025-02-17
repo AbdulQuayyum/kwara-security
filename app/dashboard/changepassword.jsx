@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 
 import { AuthContext } from '../../context/authcontext';
 import images from "../../assets/images/index";
@@ -16,6 +16,7 @@ const ChangePassword = () => {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (field, value) => {
         setValues({ ...values, [field]: value });
@@ -34,6 +35,8 @@ const ChangePassword = () => {
         }
 
         setError("");
+        setIsLoading(true);
+
         const requestBody = {
             currentPassword: currentPassword,
             newPassword: newPassword,
@@ -61,6 +64,8 @@ const ChangePassword = () => {
             } else {
                 setError("Failed to change password. Please check your connection and try again.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -109,8 +114,12 @@ const ChangePassword = () => {
                             </Text>
                         ) : null}
                     </View>
-                    <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" onPress={handleSubmit}>
-                        <Text style={{ fontFamily: fonts.light }} className="text-[#FFF] font-[600] leading-[21px] text-[16px]">Change Password</Text>
+                    <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleSubmit}>
+                        {isLoading ? (
+                            <ActivityIndicator color="#FFFFFF" />
+                        ) : (
+                            <Text style={{ fontFamily: fonts.light }} className="text-[#FFFFFF] font-[600] leading-[21px] text-[16px]">Change Password</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>
