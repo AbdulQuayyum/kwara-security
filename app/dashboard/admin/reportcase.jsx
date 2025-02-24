@@ -4,13 +4,13 @@ import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 
-import BottomNavigation from '../../components/BottomNavigation';
-import { AuthContext } from '../../context/authcontext';
-import images from "../../assets/images/index";
-import { fonts } from "../../assets/fonts";
-import styles from "../../styles/main";
+import BottomNavigation from '../../../components/BottomNavigation';
+import { AuthContext } from '../../../context/authcontext';
+import images from "../../../assets/images/index";
+import { fonts } from "../../../assets/fonts";
+import styles from "../../../styles/main";
 
-const Home = () => {
+const ReportCase = () => {
     const router = useRouter();
     const { authState } = useContext(AuthContext);
     const [greeting, setGreeting] = useState("");
@@ -117,4 +117,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default ReportCase;

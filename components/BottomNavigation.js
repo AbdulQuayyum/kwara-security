@@ -31,11 +31,6 @@ const BottomNavigation = () => {
                 inactiveIcon: images.inactivehome,
             },
             {
-                path: routes.settings,
-                activeIcon: images.activeprofile,
-                inactiveIcon: images.inactiveprofile,
-            },
-            {
                 path: routes.cases,
                 activeIcon: images.activecases,
                 inactiveIcon: images.inactivecases,
@@ -44,6 +39,11 @@ const BottomNavigation = () => {
                 path: routes.users,
                 activeIcon: images.activedocuments,
                 inactiveIcon: images.inactivedocuments,
+            },
+            {
+                path: routes.settings,
+                activeIcon: images.activeprofile,
+                inactiveIcon: images.inactiveprofile,
             }
         ]
         : [

@@ -113,7 +113,7 @@ const Profile = () => {
                     </View>
                     <View className="flex flex-col items-start w-full gap-y-8">
                         {Object.keys(fields).map((field) => (
-                            <View key={field} className="flex flex-row items-end justify-between w-full">
+                            <View key={field} className="flex flex-row items-end justify-between max-w-[92%] w-full">
                                 <View className="flex items-start w-full gap-y-1">
                                     <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[600] leading-[21px] text-[#0D0D0D] capitalize">
                                         {field.replace(/([A-Z])/g, ' $1').trim()}
@@ -158,7 +158,7 @@ const Profile = () => {
                             </View>
                         ))}
                     </View>
-                    <TouchableOpacity className="bg-primary w-full h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleUpdateProfile}>
+                    <TouchableOpacity className="bg-primary w-full mt-8 h-[60px] flex justify-center items-center rounded-lg" disabled={isLoading} onPress={handleUpdateProfile}>
                         {isLoading ? (
                             <ActivityIndicator color="#FFFFFF" />
                         ) : (
