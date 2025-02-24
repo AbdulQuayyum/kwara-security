@@ -22,8 +22,9 @@ import reportedcases from "./icon/reportedcases.png"
 import notification from "./icon/notification.png"
 import changepassword from "./icon/changepassword.png"
 import profile from "./icon/profile.png"
+import search from "./icon/search.png"
 
 export default { 
     activeanalytics, activecases, activehome, activesettings, activesettings, inactiveusers, activeusers, inactiveanalytics, inactivecases, inactivehome, inactivesettings, inactivesettings, inactiveusers, 
-    edit, eyeclose, eyeopen, hi, logout, notification, reportedcases, changepassword, profile, carretright, mark, arrowleft
+    edit, eyeclose, eyeopen, hi, logout, notification, reportedcases, changepassword, profile, carretright, mark, arrowleft, search
 }

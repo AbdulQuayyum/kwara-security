@@ -60,7 +60,7 @@ const BottomNavigation = () => {
             {
                 path: routes.settings,
                 activeIcon: images.activesettings,
-                inactiveIcon: images.inactiveprofile,
+                inactiveIcon: images.inactivesettings,
             }
         ];
 

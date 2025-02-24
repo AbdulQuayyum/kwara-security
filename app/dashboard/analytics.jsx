@@ -131,15 +131,15 @@ const Analytics = () => {
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Cases Overview</Text>
                                 <View className="flex flex-row justify-between">
-                                    <View className="flex-1">
+                                    <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Cases</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{casesData?.totalCases || 0}</Text>
                                     </View>
-                                    <View className="flex-1">
+                                    <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Resolved</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-green-600">{casesData?.resolvedCases || 0}</Text>
                                     </View>
-                                    <View className="flex-1">
+                                    <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Pending</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-yellow-600">{casesData?.pendingCases || 0}</Text>
                                     </View>
@@ -150,15 +150,19 @@ const Analytics = () => {
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Users Overview</Text>
                                 <View className="flex flex-row justify-between">
-                                    <View className="flex-1">
+                                    <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Users</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{usersData?.totalUsers || 0}</Text>
                                     </View>
-                                    <View className="flex-1">
+                                    <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Verified</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-green-600">{usersData?.verifiedUsers || 0}</Text>
                                     </View>
-                                    <View className="flex-1">
+                                    <View className="flex flex-col items-start flex-1 gap-y-2">
+                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Unverified</Text>
+                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-yellow-600">{usersData?.unverifiedUsers || 0}</Text>
+                                    </View>
+                                    <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Suspended</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-red-600">{usersData?.suspendedUsers || 0}</Text>
                                     </View>
@@ -170,31 +174,31 @@ const Analytics = () => {
                                 {locationsData.map((location, index) => (
                                     <View key={index} className="flex flex-col justify-between mb-4">
                                         <View className="flex flex-row flex-1 mb-4">
-                                            <View className="flex-1">
+                                            <View className="flex flex-col items-start flex-1 gap-y-2">
                                                 <Text style={{ fontFamily: fonts.light }} className="text-gray-600">LGA:</Text>
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location.lga}</Text>
+                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location?.lga}</Text>
                                             </View>
-                                            <View className="flex-1">
+                                            <View className="flex flex-col items-start flex-1 gap-y-2">
                                                 <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Ward:</Text>
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location.ward}</Text>
+                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location?.ward}</Text>
                                             </View>
-                                            <View className="flex-1">
+                                            <View className="flex flex-col items-start flex-1 gap-y-2">
                                                 <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Community:</Text>
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location.community}</Text>
+                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location?.community}</Text>
                                             </View>
                                         </View>
                                         <View key={index} className="flex flex-row justify-between mb-4">
-                                            <View className="flex-1">
+                                            <View className="flex flex-col items-start flex-1 gap-y-2">
                                                 <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Cases</Text>
-                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{location.totalCases}</Text>
+                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{location?.totalCases}</Text>
                                             </View>
-                                            <View className="flex-1">
+                                            <View className="flex flex-col items-start flex-1 gap-y-2">
                                                 <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Resolved</Text>
-                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-green-600">{location.resolvedCases}</Text>
+                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-green-600">{location?.resolvedCases}</Text>
                                             </View>
-                                            <View className="flex-1">
+                                            <View className="flex flex-col items-start flex-1 gap-y-2">
                                                 <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Pending</Text>
-                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-yellow-600">{location.pendingCases}</Text>
+                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-yellow-600">{location?.pendingCases}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -204,8 +208,8 @@ const Analytics = () => {
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top LGAs</Text>
                                 {lgasData.map((lga, index) => (
                                     <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{lga.lga}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{lga.totalCases}</Text>
+                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{lga?.lga}</Text>
+                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{lga?.totalCases} Cases</Text>
                                     </View>
                                 ))}
                             </View>
@@ -213,8 +217,8 @@ const Analytics = () => {
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Wards</Text>
                                 {wardsData.map((ward, index) => (
                                     <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{ward.ward}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{ward.totalCases}</Text>
+                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{ward?.ward}</Text>
+                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{ward?.totalCases} Cases</Text>
                                     </View>
                                 ))}
                             </View>
@@ -222,8 +226,8 @@ const Analytics = () => {
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Communities</Text>
                                 {communitiesData.map((community, index) => (
                                     <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{community.community}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{community.totalCases}</Text>
+                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{community?.community}</Text>
+                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{community?.totalCases} Cases</Text>
                                     </View>
                                 ))}
                             </View>
@@ -231,8 +235,8 @@ const Analytics = () => {
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Users by Cases</Text>
                                 {userCasesData.map((user, index) => (
                                     <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{user.userName}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{user.totalCases}</Text>
+                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{user?.userName}</Text>
+                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{user?.totalCases} Cases</Text>
                                     </View>
                                 ))}
                             </View>

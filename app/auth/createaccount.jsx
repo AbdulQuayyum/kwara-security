@@ -52,8 +52,8 @@ const CreateAccount = () => {
 
         if (text.startsWith('+234') && text.length === 14) {
             formattedNumber = text;
-        } else if (text.length === 11 && !text.startsWith('+234')) {
-            formattedNumber = `+234${text}`;
+        } else if (text.startsWith('0') && text.length === 11) {
+            formattedNumber = `+234${text.slice(1)}`;
         } else {
             formattedNumber = text;
         }

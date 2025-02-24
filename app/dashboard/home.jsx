@@ -59,7 +59,11 @@ const Home = () => {
                 }
             );
             Alert.alert("Success", "Report submitted successfully");
-            console.log(response.data);
+            setFormData({
+                subject: "",
+                description: ""
+            })
+            // console.log(response.data);
         } catch (error) {
             Alert.alert("Error", "Failed to submit report");
             console.error(error);
