@@ -49,6 +49,14 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: -15,
     },
+    inactiveDot: {
+        width: 5,
+        height: 5,
+        backgroundColor: "transparent",
+        borderRadius: 5,
+        position: "absolute",
+        bottom: -15,
+    },
 });
 
 export default styles;

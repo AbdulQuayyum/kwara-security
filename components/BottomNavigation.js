@@ -26,6 +26,11 @@ const BottomNavigation = () => {
     const dataList = authState?.user?.isAdmin
         ? [
             {
+                path: routes.analytics,
+                activeIcon: images.activeanalytics,
+                inactiveIcon: images.inactiveanalytics,
+            },
+            {
                 path: routes.home,
                 activeIcon: images.activehome,
                 inactiveIcon: images.inactivehome,
@@ -37,13 +42,13 @@ const BottomNavigation = () => {
             },
             {
                 path: routes.users,
-                activeIcon: images.activedocuments,
-                inactiveIcon: images.inactivedocuments,
+                activeIcon: images.activeusers,
+                inactiveIcon: images.inactiveusers,
             },
             {
                 path: routes.settings,
-                activeIcon: images.activeprofile,
-                inactiveIcon: images.inactiveprofile,
+                activeIcon: images.activesettings,
+                inactiveIcon: images.inactivesettings,
             }
         ]
         : [
@@ -54,7 +59,7 @@ const BottomNavigation = () => {
             },
             {
                 path: routes.settings,
-                activeIcon: images.activeprofile,
+                activeIcon: images.activesettings,
                 inactiveIcon: images.inactiveprofile,
             }
         ];
@@ -76,9 +81,7 @@ const BottomNavigation = () => {
                                 <TouchableOpacity key={index} onPress={() => handleItemPress(item)} style={[styles.navItem, isActive && styles.activeNavItem]} >
                                     <View style={styles.iconWrapper}>
                                         <Image source={isActive ? item.activeIcon : item.inactiveIcon} style={styles.icon} />
-                                        {isActive && (
-                                            <View style={styles.activeDot} />
-                                        )}
+                                            <View style={ isActive ? styles.activeDot : styles.inactiveDot} />
                                     </View>
                                 </TouchableOpacity>
                             );

@@ -18,12 +18,12 @@ import eyeopen from "./icon/eye-open.png"
 import hi from "./icon/hi.png"
 import logout from "./icon/logout.png"
 import mark from "./icon/mark.png"
-import legal from "./icon/legal.png"
+import reportedcases from "./icon/reportedcases.png"
 import notification from "./icon/notification.png"
-import privacy from "./icon/privacy.png"
+import changepassword from "./icon/changepassword.png"
 import profile from "./icon/profile.png"
 
 export default { 
-    activeanalytics, activecases, activehome, activesettings, activesettings, inactiveusers, inactiveanalytics, inactivecases, inactivehome, inactivesettings, inactivesettings, inactiveusers, 
-    edit, eyeclose, eyeopen, hi, logout, notification, legal, privacy, profile, carretright, mark, arrowleft
+    activeanalytics, activecases, activehome, activesettings, activesettings, inactiveusers, activeusers, inactiveanalytics, inactivecases, inactivehome, inactivesettings, inactivesettings, inactiveusers, 
+    edit, eyeclose, eyeopen, hi, logout, notification, reportedcases, changepassword, profile, carretright, mark, arrowleft
 }

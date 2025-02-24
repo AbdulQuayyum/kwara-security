@@ -30,7 +30,9 @@ const Settings = () => {
                             <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[700] leading-[21px] text-[#0D0D0D]">Profile</Text>
                             <TouchableOpacity className="flex flex-row items-center justify-between w-full" onPress={() => { router.push(routes.profile) }}>
                                 <View className="flex flex-row items-center gap-x-4">
-                                    <Image source={images.profile} style={{ height: 52, width: 52 }} />
+                                    <View style={{ height: 52, width: 52, backgroundColor: "#F4F4F4", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <Image source={images.profile} style={{ height: 22, width: 22 }} />
+                                    </View>
                                     <View className="flex items-start gap-y-1">
                                         <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[600] leading-[21px] text-[#0D0D0D]">
                                             {authState?.user?.name}
@@ -49,7 +51,9 @@ const Settings = () => {
                             <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[700] leading-[21px] text-[#0D0D0D]">Profile</Text>
                             <TouchableOpacity className="flex flex-row items-center justify-between w-full" onPress={() => { router.push(routes.mycases) }}>
                                 <View className="flex flex-row items-center gap-x-4">
-                                    <Image source={images.legal} style={{ height: 52, width: 52 }} />
+                                    <View style={{ height: 52, width: 52, backgroundColor: "#F4F4F4", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <Image source={images.reportedcases} style={{ height: 22, width: 22 }} />
+                                    </View>
                                     <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[600] leading-[21px] text-[#0D0D0D]">
                                         Reported Cases
                                     </Text>
@@ -58,7 +62,9 @@ const Settings = () => {
                             </TouchableOpacity>
                             <TouchableOpacity className="flex flex-row items-center justify-between w-full" onPress={() => { router.push(routes.changepassword) }}>
                                 <View className="flex flex-row items-center gap-x-4">
-                                    <Image source={images.privacy} style={{ height: 52, width: 52 }} />
+                                    <View style={{ height: 52, width: 52, backgroundColor: "#F4F4F4", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <Image source={images.changepassword} style={{ height: 22, width: 22 }} />
+                                    </View>
                                     <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[600] leading-[21px] text-[#0D0D0D]">
                                         Change Password
                                     </Text>
