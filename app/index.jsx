@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
@@ -17,10 +17,15 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { authState, login } = useContext(AuthContext);
 
-    if (authState.isAuthenticated) {
-        router.replace("/dashboard/home");
-        return null;
-    }
+    useEffect(() => {
+        if (authState.isAuthenticated && authState.user) {
+            if (authState.user.isAdmin) {
+                router.replace("/dashboard/analytics");
+            } else {
+                router.replace("/dashboard/home");
+            }
+        }
+    }, [authState.isAuthenticated, authState.user]);
 
     const handleChange = (field, value) => {
         setValues({ ...values, [field]: value });
@@ -44,10 +49,27 @@ const Login = () => {
             });
 
             if (response.data.success) {
-                login(response.data.data.token);
+                await login(response.data.data.token);
+                const waitForProfile = () => {
+                    return new Promise((resolve) => {
+                        const checkProfile = setInterval(() => {
+                            if (authState.user) {
+                                clearInterval(checkProfile);
+                                resolve(authState.user);
+                            }
+                        }, 100);
+                    });
+                };
+
+                const userProfile = await waitForProfile();
+                console.log(userProfile)
 
                 Alert.alert("Success", response.data.message || "Logged in successfully!");
-                router.navigate("/dashboard/home");
+                if (userProfile.isAdmin) {
+                    router.navigate("/dashboard/analytics");
+                } else {
+                    router.navigate("/dashboard/home");
+                }
             } else {
                 Alert.alert("Error", response.data.error || "Failed to log in. Please try again.");
             }
@@ -62,7 +84,7 @@ const Login = () => {
             setIsLoading(false);
         }
     };
-
+    
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
             <Stack.Screen options={{ headerShown: false }} />
