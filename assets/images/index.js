@@ -1,20 +1,30 @@
+import activeanalytics from "./bottom-navigation/active-analytics.png"
 import activecases from "./bottom-navigation/active-cases.png"
-import activedocuments from "./bottom-navigation/active-documents.png"
 import activehome from "./bottom-navigation/active-home.png"
-import activeprofile from "./bottom-navigation/active-profile.png"
-import inactivecases from "./bottom-navigation/inactive-cases.png"
-import inactivedocuments from "./bottom-navigation/inactive-document.png"
-import inactivehome from "./bottom-navigation/inactive-home.png"
-import inactiveprofile from "./bottom-navigation/inactive-profile.png"
+import activeusers from "./bottom-navigation/active-users.png"
+import activesettings from "./bottom-navigation/active-settings.png"
 
+import inactiveanalytics from "./bottom-navigation/inactive-analytics.png"
+import inactivecases from "./bottom-navigation/inactive-cases.png"
+import inactivehome from "./bottom-navigation/inactive-home.png"
+import inactiveusers from "./bottom-navigation/inactive-users.png"
+import inactivesettings from "./bottom-navigation/inactive-settings.png"
+
+import arrowleft from "./icon/arrow-left.png"
+import carretright from "./icon/carretright.png"
 import edit from "./icon/edit.png"
 import eyeclose from "./icon/eye-close.png"
 import eyeopen from "./icon/eye-open.png"
 import hi from "./icon/hi.png"
 import logout from "./icon/logout.png"
+import mark from "./icon/mark.png"
+import reportedcases from "./icon/reportedcases.png"
 import notification from "./icon/notification.png"
+import changepassword from "./icon/changepassword.png"
+import profile from "./icon/profile.png"
+import search from "./icon/search.png"
 
 export default { 
-    activecases, activedocuments, activehome, activeprofile, inactivecases, inactivedocuments, inactivehome, inactiveprofile, 
-    edit, eyeclose, eyeopen, hi, logout, notification
+    activeanalytics, activecases, activehome, activesettings, activesettings, inactiveusers, activeusers, inactiveanalytics, inactivecases, inactivehome, inactivesettings, inactivesettings, inactiveusers, 
+    edit, eyeclose, eyeopen, hi, logout, notification, reportedcases, changepassword, profile, carretright, mark, arrowleft, search
 }
