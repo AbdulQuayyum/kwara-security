@@ -1,11 +1,14 @@
+import activeanalytics from "./bottom-navigation/active-analytics.png"
 import activecases from "./bottom-navigation/active-cases.png"
-import activedocuments from "./bottom-navigation/active-documents.png"
 import activehome from "./bottom-navigation/active-home.png"
-import activeprofile from "./bottom-navigation/active-profile.png"
+import activeusers from "./bottom-navigation/active-users.png"
+import activesettings from "./bottom-navigation/active-settings.png"
+
+import inactiveanalytics from "./bottom-navigation/inactive-analytics.png"
 import inactivecases from "./bottom-navigation/inactive-cases.png"
-import inactivedocuments from "./bottom-navigation/inactive-document.png"
 import inactivehome from "./bottom-navigation/inactive-home.png"
-import inactiveprofile from "./bottom-navigation/inactive-profile.png"
+import inactiveusers from "./bottom-navigation/inactive-users.png"
+import inactivesettings from "./bottom-navigation/inactive-settings.png"
 
 import arrowleft from "./icon/arrow-left.png"
 import carretright from "./icon/carretright.png"
@@ -21,6 +24,6 @@ import privacy from "./icon/privacy.png"
 import profile from "./icon/profile.png"
 
 export default { 
-    activecases, activedocuments, activehome, activeprofile, inactivecases, inactivedocuments, inactivehome, inactiveprofile, 
+    activeanalytics, activecases, activehome, activesettings, activesettings, inactiveusers, inactiveanalytics, inactivecases, inactivehome, inactivesettings, inactivesettings, inactiveusers, 
     edit, eyeclose, eyeopen, hi, logout, notification, legal, privacy, profile, carretright, mark, arrowleft
 }
