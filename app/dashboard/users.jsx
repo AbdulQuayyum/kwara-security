@@ -137,6 +137,16 @@ const Users = () => {
                         {user.lga}
                     </Text>
                 </View>
+                <View className="px-2 py-1 bg-gray-100 rounded">
+                    <Text style={{ fontFamily: fonts.light }} className="text-sm">
+                        {user.ward}
+                    </Text>
+                </View>
+                <View className="px-2 py-1 bg-gray-100 rounded">
+                    <Text style={{ fontFamily: fonts.light }} className="text-sm">
+                        {user.community}
+                    </Text>
+                </View>
             </View>
         </View>
     );
@@ -182,15 +192,15 @@ const Users = () => {
                                     {filteredUsers.map((user) => (
                                         <UserCard key={user.userID} user={user} />
                                     ))}
-                                <View className="flex items-center justify-center w-full py-2">
-                                    {searchQuery.trim() !== '' && (
-                                        <TouchableOpacity onPress={() => { setSearchQuery(''); setFilteredUsers(users) }} className="px-4 py-4 bg-blue-500 rounded-lg">
-                                            <Text style={{ fontFamily: fonts.semibold }} className="text-white">
-                                                Reset
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
+                                    <View className="flex items-center justify-center w-full py-2">
+                                        {searchQuery.trim() !== '' && (
+                                            <TouchableOpacity onPress={() => { setSearchQuery(''); setFilteredUsers(users) }} className="px-4 py-4 bg-blue-500 rounded-lg">
+                                                <Text style={{ fontFamily: fonts.semibold }} className="text-white">
+                                                    Reset
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
                                 </View>
                             )}
                         </View>

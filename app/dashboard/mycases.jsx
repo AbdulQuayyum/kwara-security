@@ -120,9 +120,9 @@ const MyCases = () => {
                                                 {caseItem.subject}
                                             </Text>
                                         </View>
-                                        <TouchableOpacity onPress={() => handleEditToggle(caseItem)}>
+                                        {/* <TouchableOpacity onPress={() => handleEditToggle(caseItem)}>
                                             <Image source={images.edit} style={{ height: 16, width: 16 }} />
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> */}
                                     </View>
                                     <View className="flex flex-col items-start w-full gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">

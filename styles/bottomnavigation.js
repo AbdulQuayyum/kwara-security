@@ -57,6 +57,15 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: -15,
     },
+    navText: {
+        fontSize: 12,
+        marginTop: 4,
+        color: "#888",
+    },
+    activeNavText: {
+        color: "#000",
+        fontWeight: "bold",
+    },
 });
 
 export default styles;

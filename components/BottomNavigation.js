@@ -1,5 +1,5 @@
 import { useEffect, useRef, useContext } from "react";
-import { View, Image, TouchableOpacity, Animated } from "react-native";
+import { View, Image, TouchableOpacity, Animated , Text} from "react-native";
 import { useRouter, usePathname } from "expo-router";
 
 import { AuthContext } from "../context/authcontext";
@@ -27,40 +27,47 @@ const BottomNavigation = () => {
         ? [
             {
                 path: routes.analytics,
+                name: "Analytics",
                 activeIcon: images.activeanalytics,
-                inactiveIcon: images.inactiveanalytics,
+                inactiveIcon: images.inactiveanalytics
             },
             {
                 path: routes.home,
+                name: "Home",
                 activeIcon: images.activehome,
-                inactiveIcon: images.inactivehome,
+                inactiveIcon: images.inactivehome
             },
             {
                 path: routes.cases,
+                name: "Cases",
                 activeIcon: images.activecases,
-                inactiveIcon: images.inactivecases,
+                inactiveIcon: images.inactivecases
             },
             {
                 path: routes.users,
+                name: "Users",
                 activeIcon: images.activeusers,
-                inactiveIcon: images.inactiveusers,
+                inactiveIcon: images.inactiveusers
             },
             {
                 path: routes.settings,
+                name: "Settings",
                 activeIcon: images.activesettings,
-                inactiveIcon: images.inactivesettings,
+                inactiveIcon: images.inactivesettings
             }
         ]
         : [
             {
                 path: routes.home,
+                name: "Home",
                 activeIcon: images.activehome,
-                inactiveIcon: images.inactivehome,
+                inactiveIcon: images.inactivehome
             },
             {
                 path: routes.settings,
+                name: "Settings",
                 activeIcon: images.activesettings,
-                inactiveIcon: images.inactivesettings,
+                inactiveIcon: images.inactivesettings
             }
         ];
 
@@ -81,8 +88,11 @@ const BottomNavigation = () => {
                                 <TouchableOpacity key={index} onPress={() => handleItemPress(item)} style={[styles.navItem, isActive && styles.activeNavItem]} >
                                     <View style={styles.iconWrapper}>
                                         <Image source={isActive ? item.activeIcon : item.inactiveIcon} style={styles.icon} />
-                                            <View style={ isActive ? styles.activeDot : styles.inactiveDot} />
+                                        <View style={isActive ? styles.activeDot : styles.inactiveDot} />
                                     </View>
+                                    <Text style={[styles.navText, isActive && styles.activeNavText]}>
+                                        {item.name}
+                                    </Text>
                                 </TouchableOpacity>
                             );
                         })}
