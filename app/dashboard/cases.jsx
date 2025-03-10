@@ -200,14 +200,18 @@ const Cases = () => {
                                             </Text>
 
                                             <View className="flex flex-row gap-x-4">
-                                                {!caseItem?.isViewed && (
+                                                {!caseItem?.isViewed ? (
                                                     <TouchableOpacity onPress={() => markCaseAsViewed(caseItem?.caseID)} className="px-4 py-2 bg-blue-500 rounded-lg">
                                                         <Text style={{ fontFamily: fonts.semibold }} className="text-white">Mark as Viewed</Text>
+                                                    </TouchableOpacity>
+                                                ) : (
+                                                    <TouchableOpacity className="px-4 py-2 bg-black rounded-lg">
+                                                        <Text style={{ fontFamily: fonts.semibold }} className="text-white">Viewed</Text>
                                                     </TouchableOpacity>
                                                 )}
                                                 {!caseItem?.isResolved ? (
                                                     <TouchableOpacity onPress={() => resolveCase(caseItem?.caseID)} className="px-4 py-2 bg-green-500 rounded-lg">
-                                                        <Text style={{ fontFamily: fonts.semibold }} className="text-white">Resolve</Text>
+                                                        <Text style={{ fontFamily: fonts.semibold }} className="text-white">Mark as Resolved</Text>
                                                     </TouchableOpacity>
                                                 ) : (
                                                     <TouchableOpacity className="px-4 py-2 bg-black rounded-lg">

@@ -127,7 +127,6 @@ const Analytics = () => {
                         </View>
                     ) : (
                         <>
-                            {/* Cases Overview */}
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Cases Overview</Text>
                                 <View className="flex flex-row justify-between">
@@ -145,8 +144,6 @@ const Analytics = () => {
                                     </View>
                                 </View>
                             </View>
-
-                            {/* Users Overview */}
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Users Overview</Text>
                                 <View className="flex flex-row justify-between">
@@ -171,36 +168,67 @@ const Analytics = () => {
 
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Locations Overview</Text>
-                                {locationsData.map((location, index) => (
-                                    <View key={index} className="flex flex-col justify-between mb-4">
-                                        <View className="flex flex-row flex-1 mb-4">
-                                            <View className="flex flex-col items-start flex-1 gap-y-2">
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">LGA:</Text>
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location?.lga}</Text>
-                                            </View>
-                                            <View className="flex flex-col items-start flex-1 gap-y-2">
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Ward:</Text>
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location?.ward}</Text>
-                                            </View>
-                                            <View className="flex flex-col items-start flex-1 gap-y-2">
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Community:</Text>
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{location?.community}</Text>
-                                            </View>
-                                        </View>
-                                        <View key={index} className="flex flex-row justify-between mb-4">
-                                            <View className="flex flex-col items-start flex-1 gap-y-2">
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Cases</Text>
-                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{location?.totalCases}</Text>
-                                            </View>
-                                            <View className="flex flex-col items-start flex-1 gap-y-2">
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Resolved</Text>
-                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-green-600">{location?.resolvedCases}</Text>
-                                            </View>
-                                            <View className="flex flex-col items-start flex-1 gap-y-2">
-                                                <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Pending</Text>
-                                                <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-yellow-600">{location?.pendingCases}</Text>
+                                {locationsData.map((lga, lgaIndex) => (
+                                    <View key={lgaIndex} className="flex flex-col items-start w-full mb-6">
+                                        <View className="flex flex-col items-start justify-start mb-4 gap-y-2">
+                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px]">LGA: {lga?.lga}</Text>
+                                            <View className="flex flex-row gap-x-4">
+                                                <View className="flex flex-col items-center">
+                                                    <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Cases</Text>
+                                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px]">{lga?.totalCasesInLGA}</Text>
+                                                </View>
+                                                <View className="flex flex-col items-center">
+                                                    <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Resolved</Text>
+                                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] text-green-600">{lga?.resolvedCasesInLGA}</Text>
+                                                </View>
+                                                <View className="flex flex-col items-center">
+                                                    <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Pending</Text>
+                                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] text-yellow-600">{lga?.pendingCasesInLGA}</Text>
+                                                </View>
                                             </View>
                                         </View>
+                                        {lga?.wards.map((ward, wardIndex) => (
+                                            <View key={wardIndex} className="flex flex-col items-start mb-4">
+                                                <View className="flex flex-col items-start justify-start mb-2 gap-y-2">
+                                                    <Text style={{ fontFamily: fonts.medium }} className="text-[16px]">Ward: {ward?.ward}</Text>
+                                                    <View className="flex flex-row gap-x-4">
+                                                        <View className="flex flex-col items-center">
+                                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Cases</Text>
+                                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px]">{ward?.totalCasesInWard}</Text>
+                                                        </View>
+                                                        <View className="flex flex-col items-center">
+                                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Resolved</Text>
+                                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px] text-green-600">{ward?.resolvedCasesInWard}</Text>
+                                                        </View>
+                                                        <View className="flex flex-col items-center">
+                                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Pending</Text>
+                                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px] text-yellow-600">{ward?.pendingCasesInWard}</Text>
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                                {ward?.communities.map((community, communityIndex) => (
+                                                    <View key={communityIndex} className="flex flex-col items-start my-2">
+                                                        <View className="flex flex-col items-start justify-start gap-y-2">
+                                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Community: {community?.community}</Text>
+                                                            <View className="flex flex-row gap-x-4">
+                                                                <View className="flex flex-col items-center">
+                                                                    <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Cases</Text>
+                                                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[16px]">{community?.totalCases}</Text>
+                                                                </View>
+                                                                <View className="flex flex-col items-center">
+                                                                    <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Resolved</Text>
+                                                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[16px] text-green-600">{community?.resolvedCases}</Text>
+                                                                </View>
+                                                                <View className="flex flex-col items-center">
+                                                                    <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Pending</Text>
+                                                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[16px] text-yellow-600">{community?.pendingCases}</Text>
+                                                                </View>
+                                                            </View>
+                                                        </View>
+                                                    </View>
+                                                ))}
+                                            </View>
+                                        ))}
                                     </View>
                                 ))}
                             </View>
