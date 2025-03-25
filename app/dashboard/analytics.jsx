@@ -4,7 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { SafeAreaView, View, Text, ScrollView, ActivityIndicator, Alert } from 'react-native';
 
-import BottomNavigation from '../../components/BottomNavigation';
+// import BottomNavigation from '../../components/BottomNavigation';
+import DrawerNavigation from "../../components/DrawerNavigation";
 import { AuthContext } from '../../context/authcontext';
 import { fonts } from "../../assets/fonts";
 import styles from "../../styles/main";
@@ -272,7 +273,8 @@ const Analytics = () => {
                     )}
                 </View>
             </ScrollView>
-            <BottomNavigation />
+            {/* <BottomNavigation /> */}
+            <DrawerNavigation />
         </SafeAreaView>
     );
 };

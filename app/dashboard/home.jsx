@@ -5,6 +5,7 @@ import axios from 'axios';
 import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 
 import BottomNavigation from '../../components/BottomNavigation';
+import DrawerNavigation from "../../components/DrawerNavigation";
 import { AuthContext } from '../../context/authcontext';
 import images from "../../assets/images/index";
 import { fonts } from "../../assets/fonts";
@@ -116,7 +117,8 @@ const Home = () => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <BottomNavigation />
+            {/* <BottomNavigation /> */}
+            <DrawerNavigation />
         </SafeAreaView>
     );
 };

@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 
 import BottomNavigation from '../../components/BottomNavigation';
+import DrawerNavigation from "../../components/DrawerNavigation";
 import { AuthContext } from '../../context/authcontext';
 import images from "../../assets/images/index"
 import { fonts } from "../../assets/fonts";
@@ -79,7 +80,8 @@ const Settings = () => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-            <BottomNavigation />
+            {/* <BottomNavigation /> */}
+            <DrawerNavigation />
         </SafeAreaView>
     );
 };

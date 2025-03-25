@@ -5,6 +5,7 @@ import axios from 'axios';
 import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 
 import BottomNavigation from '../../components/BottomNavigation';
+import DrawerNavigation from "../../components/DrawerNavigation";
 import { AuthContext } from '../../context/authcontext';
 import { fonts } from "../../assets/fonts";
 import images from '../../assets/images';
@@ -236,7 +237,8 @@ const Cases = () => {
                     )}
                 </View>
             </ScrollView>
-            <BottomNavigation />
+            {/* <BottomNavigation /> */}
+            <DrawerNavigation />
         </SafeAreaView>
     );
 };
