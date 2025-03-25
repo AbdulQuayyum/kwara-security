@@ -2,11 +2,14 @@ import { useState, useEffect, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 
+import { addToQueue, processQueue } from '../../utilities/offlinequeue';
 import BottomNavigation from '../../components/BottomNavigation';
 import DrawerNavigation from "../../components/DrawerNavigation";
 import { AuthContext } from '../../context/authcontext';
+import { useNetworkStatus } from 'expo-network';
 import images from "../../assets/images/index";
 import { fonts } from "../../assets/fonts";
 import styles from "../../styles/main";
@@ -21,6 +24,18 @@ const Home = () => {
         description: "",
         useCurrentTime: true
     });
+
+    const isOnline = useNetworkStatus();
+
+    useEffect(() => {
+        if (isOnline && authState.isAuthenticated) {
+            processQueue(authState.token).then(count => {
+                if (count > 0) {
+                    Alert.alert("Success", `${count} offline reports were successfully submitted`);
+                }
+            });
+        }
+    }, [isOnline, authState.isAuthenticated]);
 
     useEffect(() => {
         const currentHour = new Date().getHours();
@@ -40,33 +55,55 @@ const Home = () => {
     };
 
     const handleSubmit = async () => {
+        if (!authState.isAuthenticated) {
+            Alert.alert("Error", "You need to be authenticated to submit reports");
+            return;
+        }
 
         const reportData = {
             userID: authState?.user?.userID,
             subject: formData.subject,
             description: formData.description,
-            time: new Date().toISOString()
+            time: new Date().toISOString(),
+            localId: uuidv4()
         };
         setIsLoading(true);
 
         try {
-            const response = await axios.post(
-                'https://kwara-security-api-production.up.railway.app/v1/user/report-case',
-                reportData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${authState?.token}`,
-                    },
+            if (isOnline) {
+                const response = await axios.post(
+                    'https://kwara-security-api-production.up.railway.app/v1/user/report-case',
+                    reportData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authState?.token}`,
+                        },
+                    }
+                );
+
+                if (response.data.success) {
+                    Alert.alert("Success", "Report submitted successfully");
+                    setFormData({
+                        subject: "",
+                        description: ""
+                    });
+                } else {
+                    throw new Error(response.data.message || "Failed to submit report");
                 }
-            );
-            Alert.alert("Success", "Report submitted successfully");
-            setFormData({
-                subject: "",
-                description: ""
-            })
-            // console.log(response.data);
+            } else {
+                const added = await addToQueue(reportData);
+                if (added) {
+                    Alert.alert("Report Saved", "Your report has been saved and will be submitted when you're back online");
+                    setFormData({
+                        subject: "",
+                        description: ""
+                    });
+                } else {
+                    throw new Error("Failed to save report offline");
+                }
+            }
         } catch (error) {
-            Alert.alert("Error", "Failed to submit report");
+            Alert.alert("Error", error.message || "Failed to submit report");
             console.error(error);
         } finally {
             setIsLoading(false);

@@ -2148,6 +2148,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/netinfo@npm:^11.4.1":
+  version: 11.4.1
+  resolution: "@react-native-community/netinfo@npm:11.4.1"
+  peerDependencies:
+    react-native: ">=0.59"
+  checksum: d347ae522da6b8c045d6378754d4928bdf23cc85b74571b91fa8a03fa168bdac5e3c65eb97eac0dd0c7cbd20e782f99d41b090fb79ce7d815cbaf6fb5d1abe37
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.76.7":
   version: 0.76.7
   resolution: "@react-native/assets-registry@npm:0.76.7"
@@ -4666,6 +4675,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-secure-store@npm:^14.0.1":
+  version: 14.0.1
+  resolution: "expo-secure-store@npm:14.0.1"
+  peerDependencies:
+    expo: "*"
+  checksum: a38f4fc06ba1ff334c930a433fbc12c49e3af63e32687bd4bcfa0130da2aefa55ab721a5ce248387962399f2d7a13b6979ae3c81363d076376dbfa6bc4584dad
+  languageName: node
+  linkType: hard
+
 "expo-splash-screen@npm:~0.29.22":
   version: 0.29.22
   resolution: "expo-splash-screen@npm:0.29.22"
@@ -6556,6 +6574,7 @@ __metadata:
     "@babel/core": ^7.25.2
     "@expo/vector-icons": ^14.0.2
     "@react-native-async-storage/async-storage": 1.23.1
+    "@react-native-community/netinfo": ^11.4.1
     "@react-navigation/bottom-tabs": ^7.2.0
     "@react-navigation/native": ^7.0.14
     "@types/jest": ^29.5.12
@@ -6570,6 +6589,7 @@ __metadata:
     expo-linking: ~7.0.5
     expo-network: ~7.0.5
     expo-router: ~4.0.19
+    expo-secure-store: ^14.0.1
     expo-splash-screen: ~0.29.22
     expo-status-bar: ~2.0.1
     expo-symbols: ~0.2.2
@@ -6590,6 +6610,7 @@ __metadata:
     react-test-renderer: 18.3.1
     tailwindcss: 3.3.2
     typescript: ^5.3.3
+    uuid: ^11.1.0
   languageName: unknown
   linkType: soft
 
@@ -10182,6 +10203,15 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^11.1.0":
+  version: 11.1.0
+  resolution: "uuid@npm:11.1.0"
+  bin:
+    uuid: dist/esm/bin/uuid
+  checksum: 840f19758543c4631e58a29439e51b5b669d5f34b4dd2700b6a1d15c5708c7a6e0c3e2c8c4a2eae761a3a7caa7e9884d00c86c02622ba91137bd3deade6b4b4a
   languageName: node
   linkType: hard
 
