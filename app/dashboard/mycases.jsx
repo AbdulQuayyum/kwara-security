@@ -1,8 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator, StatusBar } from 'react-native';
 import { AuthContext } from '../../context/authcontext';
 import images from "../../assets/images/index";
 import { fonts } from "../../assets/fonts";
@@ -25,7 +24,7 @@ const MyCases = () => {
     const fetchUserCases = async () => {
         try {
             const response = await axios.post(
-                `https://kwara-security-api-production.up.railway.app/v1/user/user-cases/${authState.user.userID}`,
+                `https://kwara-security-api.onrender.com/v1/user/user-cases/${authState.user.userID}`,
                 {},
                 { headers: { Authorization: `Bearer ${authState?.token}` } }
             );
@@ -54,7 +53,7 @@ const MyCases = () => {
         setIsLoading(true);
         try {
             const response = await axios.post(
-                `https://kwara-security-api-production.up.railway.app/v1/user/cases/${caseId}/update`,
+                `https://kwara-security-api.onrender.com/v1/user/cases/${caseId}/update`,
                 editForm, { headers: { Authorization: `Bearer ${authState?.token}` } }
             );
             if (response.data.success) {

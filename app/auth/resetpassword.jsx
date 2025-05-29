@@ -40,7 +40,7 @@ const ResetPassword = () => {
         };
 
         try {
-            const response = await axios.post('https://kwara-security-api-production.up.railway.app/v1/auth/reset-password', requestBody);
+            const response = await axios.post('https://kwara-security-api.onrender.com/v1/auth/reset-password', requestBody);
 
             if (response.data.success) {
                 Alert.alert("Success", "Your password has been reset successfully.");

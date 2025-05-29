@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, Image, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, Text, Image, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator, StatusBar } from 'react-native';
 
 import images from "../../assets/images/index"
 import { fonts } from "../../assets/fonts";
@@ -20,7 +19,7 @@ const CreateAccount = () => {
     const [lgas, setLgas] = useState({});
 
     useEffect(() => {
-        axios.post('https://kwara-security-api-production.up.railway.app/v1/misc/states')
+        axios.post('https://kwara-security-api.onrender.com/v1/misc/states')
             .then(response => {
                 setStates(response.data.data);
             })
@@ -30,7 +29,7 @@ const CreateAccount = () => {
     }, []);
 
     const fetchLgasAndWards = (state) => {
-        axios.post('https://kwara-security-api-production.up.railway.app/v1/misc/lgas-and-wards')
+        axios.post('https://kwara-security-api.onrender.com/v1/misc/lgas-and-wards')
             .then(response => {
                 const allLgasAndWards = response.data.data;
                 setLgas(allLgasAndWards);
@@ -81,7 +80,7 @@ const CreateAccount = () => {
         setError("");
         setIsLoading(true);
 
-        axios.post('https://kwara-security-api-production.up.railway.app/v1/auth/create-account', values)
+        axios.post('https://kwara-security-api.onrender.com/v1/auth/create-account', values)
             .then(response => {
                 if (response.data.success) {
                     Alert.alert("Success", response.data.message || "Account created successfully! Please wait for admin verification.");
