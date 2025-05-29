@@ -1,8 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator, StatusBar } from 'react-native';
 
 import { AuthContext } from '../context/authcontext';
 import images from "../assets/images/index"
@@ -43,8 +42,10 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('https://kwara-security-api-production.up.railway.app/v1/auth/signin', {
-                emailAddress,
+            console.log('Attempting login for:', emailAddress);
+
+            const response = await axios.post('https://kwara-security-api.onrender.com/v1/auth/signin', {
+                emailAddress: emailAddress.trim(),
                 password,
             });
 
@@ -62,7 +63,7 @@ const Login = () => {
                 };
 
                 const userProfile = await waitForProfile();
-                console.log(userProfile)
+                console.log(userProfile);
 
                 Alert.alert("Success", response.data.message || "Logged in successfully!");
                 if (userProfile.isAdmin) {
@@ -75,16 +76,27 @@ const Login = () => {
             }
         } catch (error) {
             console.error('Error logging in:', error);
+
             if (error.response) {
-                Alert.alert("Error", error.response.data.message || "Failed to log in. Please try again.");
+                console.log('Response status:', error.response.status);
+                console.log('Response data:', error.response.data);
+
+                const errorMessage = error.response.data.error ||
+                    error.response.data.message ||
+                    "Failed to log in. Please try again.";
+                Alert.alert("Error", errorMessage);
+            } else if (error.request) {
+                console.log('Network error:', error.request);
+                Alert.alert("Error", "Network error. Please check your connection and try again.");
             } else {
-                Alert.alert("Error", "Failed to log in. Please check your connection and try again.");
+                console.log('Error:', error.message);
+                Alert.alert("Error", "Failed to log in. Please try again.");
             }
         } finally {
             setIsLoading(false);
         }
     };
-    
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
             <Stack.Screen options={{ headerShown: false }} />

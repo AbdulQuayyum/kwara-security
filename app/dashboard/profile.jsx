@@ -1,8 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator, StatusBar } from 'react-native';
 
 import { AuthContext } from '../../context/authcontext';
 import images from "../../assets/images/index";
@@ -16,8 +15,8 @@ const Profile = () => {
     const [fields, setFields] = useState({
         emailAddress: { value: authState?.user?.emailAddress || '', isEditing: false },
         name: { value: authState?.user?.name || '', isEditing: false },
-        phoneNumber: { value: authState?.user?.phoneNumber || '', isEditing: false },
-        nin: { value: authState?.user?.nin || '', isEditing: false },
+        phoneNumber: { value: authState?.user?.phoneNumber ? String(authState.user.phoneNumber) : '', isEditing: false },
+        nin: { value: authState?.user?.nin ? String(authState.user.nin) : '', isEditing: false },
         state: { value: authState?.user?.state || '', isEditing: false },
         lga: { value: authState?.user?.lga || '', isEditing: false },
         ward: { value: authState?.user?.ward || '', isEditing: false },
@@ -32,7 +31,7 @@ const Profile = () => {
     });
 
     useEffect(() => {
-        axios.post('https://kwara-security-api-production.up.railway.app/v1/misc/states')
+        axios.post('https://kwara-security-api.onrender.com/v1/misc/states')
             .then(response => {
                 setStates(response.data.data);
             })
@@ -42,7 +41,7 @@ const Profile = () => {
     }, []);
 
     const fetchLgasAndWards = () => {
-        axios.post('https://kwara-security-api-production.up.railway.app/v1/misc/lgas-and-wards')
+        axios.post('https://kwara-security-api.onrender.com/v1/misc/lgas-and-wards')
             .then(response => {
                 setLgas(response.data.data);
             })

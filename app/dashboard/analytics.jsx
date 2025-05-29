@@ -1,10 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView, View, Text, ScrollView, ActivityIndicator, Alert, StatusBar } from 'react-native';
 
-// import BottomNavigation from '../../components/BottomNavigation';
 import DrawerNavigation from "../../components/DrawerNavigation";
 import { AuthContext } from '../../context/authcontext';
 import { fonts } from "../../assets/fonts";
@@ -21,19 +19,25 @@ const Analytics = () => {
     const [communitiesData, setCommunitiesData] = useState([]);
     const [userCasesData, setUserCasesData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const fetchAnalytics = async () => {
+
+        if (!authState.isAuthenticated || !authState.token) {
+            setIsLoading(false);
+            setError('Authentication required');
+            return;
+        }
+
+        if (!authState.token || typeof authState.token !== 'string' || authState.token.split('.').length !== 3) {
+            setError('Invalid authentication token');
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            const [
-                casesResponse,
-                usersResponse,
-                locationsResponse,
-                lgasResponse,
-                wardsResponse,
-                communitiesResponse,
-                userCasesResponse
-            ] = await Promise.all([
-                axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/analytics/cases',
+            const [casesResponse, usersResponse, locationsResponse, lgasResponse, wardsResponse, communitiesResponse, userCasesResponse] = await Promise.all([
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/cases',
                     {},
                     {
                         headers: {
@@ -41,7 +45,7 @@ const Analytics = () => {
                         },
                     }
                 ),
-                axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/analytics/users',
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/users',
                     {},
                     {
                         headers: {
@@ -49,7 +53,7 @@ const Analytics = () => {
                         },
                     }
                 ),
-                axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/analytics/locations',
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/locations',
                     {},
                     {
                         headers: {
@@ -57,7 +61,7 @@ const Analytics = () => {
                         },
                     }
                 ),
-                axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/analytics/lgas',
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/lgas',
                     {},
                     {
                         headers: {
@@ -65,7 +69,7 @@ const Analytics = () => {
                         },
                     }
                 ),
-                axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/analytics/wards',
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/wards',
                     {},
                     {
                         headers: {
@@ -73,7 +77,7 @@ const Analytics = () => {
                         },
                     }
                 ),
-                axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/analytics/communities',
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/communities',
                     {},
                     {
                         headers: {
@@ -81,7 +85,7 @@ const Analytics = () => {
                         },
                     }
                 ),
-                axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/analytics/usercases',
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/usercases',
                     {},
                     {
                         headers: {
@@ -100,15 +104,70 @@ const Analytics = () => {
             if (userCasesResponse.data.success) setUserCasesData(userCasesResponse.data.data);
         } catch (error) {
             console.error('Error fetching analytics:', error);
-            Alert.alert('Error', 'Failed to fetch analytics data');
+
+            if (error.response?.status === 401) {
+                setError('Authentication expired. Please login again.');
+                router.replace('/');
+            } else {
+                setError('Failed to fetch analytics data. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
+
     useEffect(() => {
-        fetchAnalytics();
-    }, []);
+        if (authState.initialized) {
+            if (authState.isAuthenticated && authState.token) {
+                fetchAnalytics();
+            } else {
+                setIsLoading(false);
+                setError('Please login to view analytics');
+            }
+        }
+    }, [authState.initialized, authState.isAuthenticated, authState.token]);
+
+    if (!authState.initialized) {
+        return (
+            <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+                <View className="flex items-center justify-center flex-1">
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text style={{ fontFamily: fonts.light }} className="mt-4 text-gray-600">
+                        Initializing...
+                    </Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    if (error) {
+        return (
+            <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+                <Stack.Screen options={{ headerShown: false }} />
+                <StatusBar style="auto" backgroundColor="#FFFFFF" />
+                <View className="flex items-center justify-center flex-1 px-4">
+                    <Text style={{ fontFamily: fonts.semibold }} className="text-[18px] text-red-600 text-center mb-4">
+                        {error}
+                    </Text>
+                    <Text
+                        style={{ fontFamily: fonts.light }}
+                        className="text-blue-600 underline"
+                        onPress={() => {
+                            if (authState.isAuthenticated) {
+                                fetchAnalytics();
+                            } else {
+                                router.replace('/');
+                            }
+                        }}
+                    >
+                        {authState.isAuthenticated ? 'Try Again' : 'Go to Login'}
+                    </Text>
+                </View>
+                <DrawerNavigation />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>

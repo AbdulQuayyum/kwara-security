@@ -1,8 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Image, StatusBar } from 'react-native';
 
 import BottomNavigation from '../../components/BottomNavigation';
 import DrawerNavigation from "../../components/DrawerNavigation";
@@ -21,7 +20,7 @@ const Cases = () => {
 
     const fetchCases = async () => {
         try {
-            const response = await axios.post('https://kwara-security-api-production.up.railway.app/v1/admin/cases',
+            const response = await axios.post('https://kwara-security-api.onrender.com/v1/admin/cases',
                 {},
                 {
                     headers: {
@@ -51,7 +50,7 @@ const Cases = () => {
         try {
             const response = await axios({
                 method: 'post',
-                url: 'https://kwara-security-api-production.up.railway.app/v1/admin/search',
+                url: 'https://kwara-security-api.onrender.com/v1/admin/search',
                 params: {
                     query: searchQuery,
                     type: 'cases'
@@ -75,7 +74,7 @@ const Cases = () => {
     const markCaseAsViewed = async (caseID) => {
         try {
             const response = await axios.post(
-                `https://kwara-security-api-production.up.railway.app/v1/admin/cases/${caseID}/checkout`,
+                `https://kwara-security-api.onrender.com/v1/admin/cases/${caseID}/checkout`,
                 {},
                 {
                     headers: {
@@ -106,7 +105,7 @@ const Cases = () => {
     const resolveCase = async (caseID) => {
         try {
             const response = await axios.post(
-                `https://kwara-security-api-production.up.railway.app/v1/admin/cases/${caseID}/resolve`,
+                `https://kwara-security-api.onrender.com/v1/admin/cases/${caseID}/resolve`,
                 {},
                 {
                     headers: {

@@ -21,12 +21,16 @@ export const AuthProvider = ({ children }) => {
 
     const storeToken = async (token) => {
         try {
+            if (!token || typeof token !== 'string' || token.split('.').length !== 3) {
+                throw new Error('Invalid token format');
+            }
             await SecureStore.setItemAsync('token', token);
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 100);
             await AsyncStorage.setItem('token_expiration', expirationDate.toISOString());
         } catch (error) {
             console.error('Error storing token:', error);
+            throw error;
         }
     };
 
@@ -43,10 +47,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const validateTokenFormat = (token) => {
+        if (!token || typeof token !== 'string') return false;
+        const parts = token.split('.');
+        return parts.length === 3 && parts.every(part => part.length > 0);
+    };
+
     const fetchUserProfile = async (token) => {
         try {
+            if (!validateTokenFormat(token)) {
+                console.error('Invalid token format');
+                await logout();
+                return false;
+            }
+
             const response = await axios.post(
-                "https://kwara-security-api-production.up.railway.app/v1/user/get-user-profile",
+                "https://kwara-security-api.onrender.com/v1/user/get-user-profile",
                 {},
                 {
                     headers: {
@@ -69,14 +85,21 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error("Error fetching user profile:", error);
+            if (error.response?.status === 401) {
+                await logout();
+            }
             return false;
         }
     };
 
     const updateUserProfile = async (updatedProfile) => {
         try {
+            if (!validateTokenFormat(authState.token)) {
+                return { success: false, message: "Invalid authentication token." };
+            }
+
             const response = await axios.post(
-                "https://kwara-security-api-production.up.railway.app/v1/user/update-user-profile",
+                "https://kwara-security-api.onrender.com/v1/user/update-user-profile",
                 updatedProfile,
                 {
                     headers: {
@@ -97,20 +120,29 @@ export const AuthProvider = ({ children }) => {
             return { success: false, message: response.data.message || "Failed to update profile." };
         } catch (error) {
             console.error("Error updating profile:", error);
+            if (error.response?.status === 401) {
+                await logout();
+                return { success: false, message: "Session expired. Please login again." };
+            }
             return { success: false, message: "Failed to update profile. Please try again." };
         }
     };
 
     const login = async (token) => {
-        await storeToken(token);
-        setAuthState(prev => ({
-            ...prev,
-            token,
-            isAuthenticated: true,
-            user: null
-        }));
+        try {
+            await storeToken(token);
+            setAuthState(prev => ({
+                ...prev,
+                token,
+                isAuthenticated: true,
+                user: null
+            }));
 
-        await fetchUserProfile(token);
+            await fetchUserProfile(token);
+        } catch (error) {
+            console.error('Error during login:', error);
+            throw error;
+        }
     };
 
     const logout = async () => {
@@ -122,9 +154,14 @@ export const AuthProvider = ({ children }) => {
             initialized: true
         });
 
-        await SecureStore.deleteItemAsync('token');
-        await AsyncStorage.removeItem('token_expiration');
-        await AsyncStorage.removeItem('user');
+        try {
+            await SecureStore.deleteItemAsync('token');
+            await AsyncStorage.removeItem('token_expiration');
+            await AsyncStorage.removeItem('user');
+        } catch (error) {
+            console.error('Error during logout cleanup:', error);
+        }
+
         router.replace("/");
     };
 
@@ -133,42 +170,43 @@ export const AuthProvider = ({ children }) => {
             const online = await isOnline();
             const storedToken = await SecureStore.getItemAsync('token');
             const storedUser = await AsyncStorage.getItem('user');
-            const tokenValid = storedToken ? await isTokenValid() : false;
 
-            setAuthState(prev => ({
-                ...prev,
-                isOnline: online,
-                initialized: true
-            }));
+            const tokenValid = storedToken && validateTokenFormat(storedToken) ? await isTokenValid() : false;
 
-            if (storedToken && tokenValid) {
+            if (storedToken && tokenValid && validateTokenFormat(storedToken)) {
                 setAuthState(prev => ({
                     ...prev,
                     token: storedToken,
                     isAuthenticated: true,
-                    user: storedUser ? JSON.parse(storedUser) : null
+                    user: storedUser ? JSON.parse(storedUser) : null,
+                    isOnline: online,
+                    initialized: true
                 }));
 
                 if (online) {
                     await fetchUserProfile(storedToken);
                 }
             } else {
-                if (storedToken && !tokenValid) {
+                if (storedToken) {
                     await logout();
                 } else {
                     setAuthState(prev => ({
                         ...prev,
                         token: null,
                         isAuthenticated: false,
-                        user: null
+                        user: null,
+                        isOnline: online,
+                        initialized: true
                     }));
-                    router.replace("/");
                 }
             }
         } catch (error) {
             console.error('Error in checkAuth:', error);
             setAuthState(prev => ({
                 ...prev,
+                token: null,
+                isAuthenticated: false,
+                user: null,
                 initialized: true
             }));
         }
@@ -182,7 +220,7 @@ export const AuthProvider = ({ children }) => {
                 isOnline: state.isConnected
             }));
 
-            if (state.isConnected) {
+            if (state.isConnected && authState.isAuthenticated) {
                 checkAuth();
             }
         });

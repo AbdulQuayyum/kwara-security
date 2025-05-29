@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
-import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Image, ActivityIndicator, StatusBar } from 'react-native';
 
 import images from "../../assets/images/index"
 import { fonts } from "../../assets/fonts";
@@ -45,7 +44,7 @@ const ForgotPassword = () => {
 
         try {
             const response = await axios.post(
-                "https://kwara-security-api-production.up.railway.app/v1/auth/forgot-password",
+                "https://kwara-security-api.onrender.com/v1/auth/forgot-password",
                 { phoneNumber }
             );
 

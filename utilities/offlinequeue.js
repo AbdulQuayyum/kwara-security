@@ -44,7 +44,7 @@ export const processQueue = async (authToken) => {
         for (const report of queue) {
             try {
                 const response = await axios.post(
-                    'https://kwara-security-api-production.up.railway.app/v1/user/report-case',
+                    'https://kwara-security-api.onrender.com/v1/user/report-case',
                     report,
                     {
                         headers: {
