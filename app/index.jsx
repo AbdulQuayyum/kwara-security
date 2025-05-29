@@ -135,11 +135,11 @@ const Login = () => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View className="flex flex-row items-center justify-end w-full">
+                        {/* <View className="flex flex-row items-center justify-end w-full">
                             <TouchableOpacity onPress={() => { router.push("/auth/forgotpassword") }}>
                                 <Text style={{ fontFamily: fonts.extralight }} className="text-[14px] font-[400] leading-[18px] text-[#EC221F]">Forgot Password</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
 
                         {error ? (
                             <Text style={{ fontFamily: fonts.extralight }} className="text-[14px] font-[400] leading-[18px] text-[#FF0000]">
