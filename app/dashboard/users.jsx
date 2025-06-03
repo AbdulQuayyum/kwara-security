@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import axios from 'axios';
 import { SafeAreaView, View, Text, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Image, StatusBar } from 'react-native';
@@ -12,6 +12,7 @@ import styles from "../../styles/main";
 const Users = () => {
     const router = useRouter();
     const { authState } = useContext(AuthContext);
+    const scrollViewRef = useRef(null);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +20,7 @@ const Users = () => {
     const [searchLoading, setSearchLoading] = useState(false);
     const [processingUsers, setProcessingUsers] = useState(new Set());
     const [error, setError] = useState(null);
+    const [showBackToTop, setShowBackToTop] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -215,10 +217,62 @@ const Users = () => {
         }
     };
 
+    const toggleAdminStatus = async (userId, isAdmin) => {
+        if (!userId) {
+            Alert.alert('Error', 'Invalid user ID');
+            return;
+        }
+
+        if (processingUsers.has(userId)) {
+            return;
+        }
+
+        try {
+            setProcessingUsers(prev => new Set([...prev, userId]));
+            
+            if (!authState?.token) {
+                throw new Error('No authentication token available');
+            }
+
+            await axios.post(
+                `https://kwara-security-api.onrender.com/v1/admin/users/${userId}/make-admin`,
+                { isAdmin: !isAdmin },
+                {
+                    headers: {
+                        Authorization: `Bearer ${authState.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    timeout: 8000,
+                }
+            );
+            
+            await fetchUsers();
+            Alert.alert('Success', `User ${isAdmin ? 'removed from' : 'granted'} admin privileges successfully`);
+            
+        } catch (error) {
+            handleApiError(error, 'Failed to update admin status');
+        } finally {
+            setProcessingUsers(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(userId);
+                return newSet;
+            });
+        }
+    };
+
     const resetSearch = () => {
         setSearchQuery('');
         setFilteredUsers(users);
         setError(null);
+    };
+
+    const scrollToTop = () => {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    };
+
+    const handleScroll = (event) => {
+        const yOffset = event.nativeEvent.contentOffset.y;
+        setShowBackToTop(yOffset > 300);
     };
 
     const UserCard = ({ user }) => {
@@ -228,10 +282,19 @@ const Users = () => {
 
         return (
             <View className="w-full p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-                <View className="flex-row items-center justify-between mb-2">
-                    <Text style={{ fontFamily: fonts.medium }} className="text-lg">
-                        {user.name || 'Unknown User'}
-                    </Text>
+                <View className="flex-row flex-wrap items-center justify-between w-full gap-4 mb-2">
+                    <View className="flex-row items-center gap-2">
+                        <Text style={{ fontFamily: fonts.medium }} className="text-lg">
+                            {user.name || 'Unknown User'}
+                        </Text>
+                        {user.isAdmin && (
+                            <View className="px-2 py-1 bg-purple-100 rounded">
+                                <Text style={{ fontFamily: fonts.light }} className="text-xs text-purple-600">
+                                    Admin
+                                </Text>
+                            </View>
+                        )}
+                    </View>
                     <View className="flex-row gap-2">
                         {!user.isVerified && (
                             <TouchableOpacity  onPress={() => verifyUser(user.userID)}  className={`px-3 py-1 rounded ${processingUsers.has(user.userID) ? 'bg-blue-300' : 'bg-blue-500'}`} disabled={loading || processingUsers.has(user.userID)}>
@@ -240,6 +303,15 @@ const Users = () => {
                                 </Text>
                             </TouchableOpacity>
                         )}
+                        
+                        {user.isVerified && (
+                            <TouchableOpacity  onPress={() => toggleAdminStatus(user.userID, user.isAdmin)}  className={`px-3 py-1 rounded ${processingUsers.has(user.userID) ? 'bg-purple-300' : user.isAdmin ? 'bg-red-500' : 'bg-purple-500'}`} disabled={loading || processingUsers.has(user.userID)}>
+                                <Text className="text-white">
+                                    {processingUsers.has(user.userID)  ? (user.isAdmin ? 'Removing...' : 'Making Admin...')  : (user.isAdmin ? 'Remove Admin' : 'Make Admin')}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                        
                         <TouchableOpacity onPress={() => toggleUserStatus(user.userID, user.isSuspended)} className={`${user.isSuspended ? 'bg-green-500' : 'bg-red-500'} px-3 py-1 rounded`}disabled={loading}>
                             <Text className="text-white">
                                 {user.isSuspended ? 'Unsuspend' : 'Suspend'}
@@ -254,6 +326,11 @@ const Users = () => {
                     Phone Number: {user.phoneNumber || 'Not provided'}
                 </Text>
                 <View className="flex-row flex-wrap mt-2">
+                    <View className="px-2 py-1 mb-2 mr-2 bg-gray-100 rounded">
+                        <Text style={{ fontFamily: fonts.light }} className="text-sm">
+                            Status: {user.isVerified ? 'Verified' : 'Unverified'}
+                        </Text>
+                    </View>
                     {user.state && (
                         <View className="px-2 py-1 mb-2 mr-2 bg-gray-100 rounded">
                             <Text style={{ fontFamily: fonts.light }} className="text-sm">
@@ -291,29 +368,33 @@ const Users = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
             <Stack.Screen options={{ headerShown: false }} />
             <StatusBar style="auto" backgroundColor="#FFFFFF" />
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
-                <View className="flex flex-col items-start gap-y-6 w-full max-w-[500px]">
-                    <View className="flex flex-row items-center justify-between w-full">
-                        <Text style={{ fontFamily: fonts.light }} className="text-[36px] font-[700] leading-[43px] text-[#0D0D0D]">
-                            Users
-                        </Text>
-                        {error && (
-                            <TouchableOpacity onPress={fetchUsers} className="px-3 py-1 bg-red-500 rounded">
-                                <Text className="text-sm text-white">Retry</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
-                    
-                    <View className="relative w-full px-4 border rounded border-[#414141]">
-                        <TextInput value={searchQuery} onChangeText={handleSearch} placeholder='Search users...' className="w-full text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" style={{ fontFamily: fonts.regular }}editable={!loading} />
-                        <TouchableOpacity className="absolute p-2 -translate-y-1/2 rounded-full right-3 top-1/2">
-                            {searchLoading ? (
-                                <ActivityIndicator size="small" color="#0000ff" />
-                            ) : (
-                                <Image source={images.search} style={{ height: 22, width: 22 }} />
-                            )}
+            
+            <View className="px-4 pt-4 pb-2 bg-white border-b border-gray-100">
+                <View className="flex flex-row items-center justify-between w-full mb-4">
+                    <Text style={{ fontFamily: fonts.light }} className="text-[36px] font-[700] leading-[43px] text-[#0D0D0D]">
+                        Users
+                    </Text>
+                    {error && (
+                        <TouchableOpacity onPress={fetchUsers} className="px-3 py-1 bg-red-500 rounded">
+                            <Text className="text-sm text-white">Retry</Text>
                         </TouchableOpacity>
-                    </View>
+                    )}
+                </View>
+                
+                <View className="relative w-full px-4 border rounded border-[#414141] mb-2">
+                    <TextInput value={searchQuery} onChangeText={handleSearch} placeholder='Search users...' className="w-full text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" style={{ fontFamily: fonts.regular }}editable={!loading}  />
+                    <TouchableOpacity className="absolute p-2 -translate-y-1/2 rounded-full right-3 top-1/2">
+                        {searchLoading ? (
+                            <ActivityIndicator size="small" color="#0000ff" />
+                        ) : (
+                            <Image source={images.search} style={{ height: 22, width: 22 }} />
+                        )}
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <ScrollView ref={scrollViewRef}showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16 }}onScroll={handleScroll}scrollEventThrottle={16}>
+                <View className="flex flex-col items-start gap-y-6 w-full max-w-[500px] mx-auto">
 
                     {loading ? (
                         <View className="flex items-center justify-center w-full py-12 rounded-lg bg-gray-50">
@@ -368,6 +449,13 @@ const Users = () => {
                     )}
                 </View>
             </ScrollView>
+
+            {showBackToTop && (
+                <TouchableOpacity  onPress={scrollToTop} className="absolute p-3 bg-blue-500 rounded-full shadow-lg bottom-20 right-4" style={{ elevation: 5 }}>
+                    <Text className="font-bold text-white">↑</Text>
+                </TouchableOpacity>
+            )}
+
             <DrawerNavigation />
         </SafeAreaView>
     );
