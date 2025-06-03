@@ -199,18 +199,18 @@ const Home = () => {
                     <View className="flex flex-col items-start w-full">
                         <View className="flex flex-col w-full gap-y-2">
                             <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
-                                Subject
+                                 Case Title (What is the case about?)
                             </Text>
-                            <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder='Enter subject' className="w-full border rounded border-[#414141] text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" value={formData.subject} onChangeText={(text) => handleChange("subject", text)} editable={!isLoading} />
+                            <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder='E.g. Suspicious activity near my home' className="w-full border rounded border-[#414141] text-[#0D0D0D] h-[60px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" value={formData.subject} onChangeText={(text) => handleChange("subject", text)} editable={!isLoading} />
                         </View>
                     </View>
 
                     <View className="flex flex-col items-start w-full">
                         <View className="flex flex-col w-full gap-y-2">
                             <Text style={{ fontFamily: fonts.light }} className="text-[16px] font-[500] leading-[21px] text-[#0D0D0D]">
-                                Description
+                                Case Description (Please provide full details)
                             </Text>
-                            <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder='Enter description' className="w-full border py-4 rounded border-[#414141] text-[#0D0D0D] justify-start h-[120px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" multilinetextAlignVertical="top" value={formData.description} onChangeText={(text) => handleChange("description", text)} editable={!isLoading} />
+                            <TextInput style={{ fontFamily: fonts.extralight }} placeholderTextColor="#0D0D0D" placeholder='Provide details like location, time, individuals involved, and what happened.' className="w-full border py-4 rounded border-[#414141] text-[#0D0D0D] justify-start h-[120px] bg-transparent px-4 flex items-start focus:outline-none focus:border-primary" multilinetextAlignVertical="top" value={formData.description} onChangeText={(text) => handleChange("description", text)} editable={!isLoading} />
                         </View>
                     </View>
 

@@ -1,12 +1,16 @@
 import { useState, useEffect, useContext } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import axios from 'axios';
-import { SafeAreaView, View, Text, ScrollView, ActivityIndicator, Alert, StatusBar } from 'react-native';
+import { SafeAreaView, View, Text, ScrollView, ActivityIndicator, StatusBar, Dimensions } from 'react-native';
 
 import DrawerNavigation from "../../components/DrawerNavigation";
 import { AuthContext } from '../../context/authcontext';
 import { fonts } from "../../assets/fonts";
 import styles from "../../styles/main";
+
+import { BarChart, LineChart, MultiLineChart, PieChart, ProgressChart, DonutChart } from '../../components/charts/chart';
+
+const windowWidth = Dimensions.get('window').width;
 
 const Analytics = () => {
     const router = useRouter();
@@ -20,9 +24,9 @@ const Analytics = () => {
     const [userCasesData, setUserCasesData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [monthlyData, setMonthlyData] = useState(null);
 
     const fetchAnalytics = async () => {
-
         if (!authState.isAuthenticated || !authState.token) {
             setIsLoading(false);
             setError('Authentication required');
@@ -36,7 +40,7 @@ const Analytics = () => {
         }
 
         try {
-            const [casesResponse, usersResponse, locationsResponse, lgasResponse, wardsResponse, communitiesResponse, userCasesResponse] = await Promise.all([
+            const [casesResponse, usersResponse, locationsResponse, lgasResponse, wardsResponse, communitiesResponse, userCasesResponse, monthlyStatsResponse] = await Promise.all([
                 axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/cases',
                     {},
                     {
@@ -92,6 +96,14 @@ const Analytics = () => {
                             Authorization: `Bearer ${authState.token}`,
                         },
                     }
+                ),
+                axios.post('https://kwara-security-api.onrender.com/v1/admin/analytics/monthly',
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authState.token}`,
+                        },
+                    }
                 )
             ]);
 
@@ -102,6 +114,24 @@ const Analytics = () => {
             if (wardsResponse.data.success) setWardsData(wardsResponse.data.data);
             if (communitiesResponse.data.success) setCommunitiesData(communitiesResponse.data.data);
             if (userCasesResponse.data.success) setUserCasesData(userCasesResponse.data.data);
+            
+            if (monthlyStatsResponse.data.success) {
+                const monthlyStats = monthlyStatsResponse.data.data;
+                setMonthlyData({
+                    totalCases: monthlyStats.totalCases.map(stat => ({
+                        x: new Date(stat.month).toLocaleString('default', { month: 'short' }),
+                        y: stat.count
+                    })),
+                    resolvedCases: monthlyStats.resolvedCases.map(stat => ({
+                        x: new Date(stat.month).toLocaleString('default', { month: 'short' }),
+                        y: stat.count
+                    })),
+                    pendingCases: monthlyStats.pendingCases.map(stat => ({
+                        x: new Date(stat.month).toLocaleString('default', { month: 'short' }),
+                        y: stat.count
+                    }))
+                });
+            }
         } catch (error) {
             console.error('Error fetching analytics:', error);
 
@@ -116,7 +146,6 @@ const Analytics = () => {
         }
     };
 
-
     useEffect(() => {
         if (authState.initialized) {
             if (authState.isAuthenticated && authState.token) {
@@ -127,6 +156,55 @@ const Analytics = () => {
             }
         }
     }, [authState.initialized, authState.isAuthenticated, authState.token]);
+
+    const prepareCasesChartData = () => {
+        if (!casesData) return [];
+        return [
+            { x: 'Resolved', y: casesData.resolvedCases, color: '#10B981' },
+            { x: 'Pending', y: casesData.pendingCases, color: '#F59E0B' }
+        ];
+    };
+
+    const prepareUsersChartData = () => {
+        if (!usersData) return [];
+        return [
+            { x: 'Verified', y: usersData.verifiedUsers, color: '#10B981' },
+            { x: 'Unverified', y: usersData.unverifiedUsers, color: '#F59E0B' },
+            { x: 'Suspended', y: usersData.suspendedUsers, color: '#EF4444' }
+        ];
+    };
+
+    const prepareTopLgasChartData = () => {
+        return lgasData.slice(0, 5).map(lga => ({
+            x: lga.lga,
+            y: lga.totalCases,
+            color: '#3B82F6'
+        }));
+    };
+
+    const prepareTopWardsChartData = () => {
+        return wardsData.slice(0, 5).map(ward => ({
+            x: ward.ward,
+            y: ward.totalCases,
+            color: '#8B5CF6'
+        }));
+    };
+
+    const prepareTopCommunitiesChartData = () => {
+        return communitiesData.slice(0, 5).map(community => ({
+            x: community.community,
+            y: community.totalCases,
+            color: '#EC4899'
+        }));
+    };
+
+    const prepareTopUsersChartData = () => {
+        return userCasesData.slice(0, 5).map(user => ({
+            x: user.userName,
+            y: user.totalCases,
+            color: '#06B6D4'
+        }));
+    };
 
     if (!authState.initialized) {
         return (
@@ -189,7 +267,7 @@ const Analytics = () => {
                         <>
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Cases Overview</Text>
-                                <View className="flex flex-row justify-between">
+                                <View className="flex flex-row justify-between mb-4">
                                     <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Cases</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{casesData?.totalCases || 0}</Text>
@@ -203,10 +281,20 @@ const Analytics = () => {
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-yellow-600">{casesData?.pendingCases || 0}</Text>
                                     </View>
                                 </View>
+                                
+                                {casesData && (
+                                  <PieChart data={prepareCasesChartData()} title="Case Status Distribution"/>
+                                )}
                             </View>
+                            {monthlyData && (
+                                <View className="w-full p-4 rounded-lg bg-gray-50">
+                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Case Trends (6 Months)</Text>
+                                    <MultiLineChart title="Cases Over Time" series={[ { name: 'Total', color: '#3B82F6', data: monthlyData.totalCases }, { name: 'Resolved', color: '#10B981', data: monthlyData.resolvedCases }, { name: 'Pending', color: '#F59E0B', data: monthlyData.pendingCases } ]} xAxisLabel="Month" yAxisLabel="Cases" />
+                                </View>
+                            )}
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Users Overview</Text>
-                                <View className="flex flex-row justify-between">
+                                <View className="flex flex-row justify-between mb-4">
                                     <View className="flex flex-col items-start flex-1 gap-y-2">
                                         <Text style={{ fontFamily: fonts.light }} className="text-gray-600">Total Users</Text>
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{usersData?.totalUsers || 0}</Text>
@@ -224,7 +312,76 @@ const Analytics = () => {
                                         <Text style={{ fontFamily: fonts.semibold }} className="text-[24px] text-red-600">{usersData?.suspendedUsers || 0}</Text>
                                     </View>
                                 </View>
+                                
+                                {usersData && (
+                                    <View className="flex flex-row flex-wrap justify-around mt-2">
+                                        <ProgressChart value={usersData.verifiedUsers} maxValue={usersData.totalUsers} title="Verified Users" color="#10B981" />
+                                        <ProgressChart value={usersData.unverifiedUsers} maxValue={usersData.totalUsers} title="Unverified Users" color="#F59E0B" />
+                                        <ProgressChart value={usersData.suspendedUsers} maxValue={usersData.totalUsers} title="Suspended Users" color="#EF4444"  />
+                                    </View>
+                                )}
+                                
+                                {usersData && (
+                                    <PieChart
+                                        data={prepareUsersChartData()}
+                                        title="User Status Distribution"
+                                    />
+                                )}
                             </View>
+                            {lgasData.length > 0 && (
+                                <View className="w-full p-4 rounded-lg bg-gray-50">
+                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top LGAs</Text>
+                                    <BarChart data={prepareTopLgasChartData()} title="Cases by LGA" xAxisLabel="Local Government Area" yAxisLabel="Number of Cases"horizontal={windowWidth < 500} />
+                                    
+                                    {lgasData.map((lga, index) => (
+                                        <View key={index} className="flex flex-row justify-between mb-4">
+                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{lga?.lga}</Text>
+                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px]">{lga?.totalCases} Cases</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
+                            {wardsData.length > 0 && (
+                                <View className="w-full p-4 rounded-lg bg-gray-50">
+                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Wards</Text>
+                                    <BarChart data={prepareTopWardsChartData()} title="Cases by Ward" xAxisLabel="Ward" yAxisLabel="Number of Cases"horizontal={windowWidth < 500}/>
+                                    
+                                    {wardsData.map((ward, index) => (
+                                        <View key={index} className="flex flex-row justify-between mb-4">
+                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{ward?.ward}</Text>
+                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px]">{ward?.totalCases} Cases</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
+
+                            {communitiesData.length > 0 && (
+                                <View className="w-full p-4 rounded-lg bg-gray-50">
+                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Communities</Text>
+                                    <BarChart data={prepareTopCommunitiesChartData()} title="Cases by Community" xAxisLabel="Community" yAxisLabel="Number of Cases"horizontal={windowWidth < 500} />
+                                    
+                                    {communitiesData.map((community, index) => (
+                                        <View key={index} className="flex flex-row justify-between mb-4">
+                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{community?.community}</Text>
+                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px]">{community?.totalCases} Cases</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
+
+                            {userCasesData.length > 0 && (
+                                <View className="w-full p-4 rounded-lg bg-gray-50">
+                                    <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Users by Cases</Text>
+                                    <BarChart data={prepareTopUsersChartData()} title="Cases Reported by User" xAxisLabel="User" yAxisLabel="Number of Cases"horizontal={true} />
+                                    
+                                    {userCasesData.map((user, index) => (
+                                        <View key={index} className="flex flex-row justify-between mb-4">
+                                            <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{user?.userName}</Text>
+                                            <Text style={{ fontFamily: fonts.semibold }} className="text-[18px]">{user?.totalCases} Cases</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
 
                             <View className="w-full p-4 rounded-lg bg-gray-50">
                                 <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Locations Overview</Text>
@@ -292,47 +449,10 @@ const Analytics = () => {
                                     </View>
                                 ))}
                             </View>
-                            <View className="w-full p-4 rounded-lg bg-gray-50">
-                                <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top LGAs</Text>
-                                {lgasData.map((lga, index) => (
-                                    <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{lga?.lga}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{lga?.totalCases} Cases</Text>
-                                    </View>
-                                ))}
-                            </View>
-                            <View className="w-full p-4 rounded-lg bg-gray-50">
-                                <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Wards</Text>
-                                {wardsData.map((ward, index) => (
-                                    <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{ward?.ward}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{ward?.totalCases} Cases</Text>
-                                    </View>
-                                ))}
-                            </View>
-                            <View className="w-full p-4 rounded-lg bg-gray-50">
-                                <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Communities</Text>
-                                {communitiesData.map((community, index) => (
-                                    <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{community?.community}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{community?.totalCases} Cases</Text>
-                                    </View>
-                                ))}
-                            </View>
-                            <View className="w-full p-4 rounded-lg bg-gray-50">
-                                <Text style={{ fontFamily: fonts.semibold }} className="text-[20px] mb-4">Top Users by Cases</Text>
-                                {userCasesData.map((user, index) => (
-                                    <View key={index} className="flex flex-row justify-between mb-4">
-                                        <Text style={{ fontFamily: fonts.light }} className="text-gray-600">{user?.userName}</Text>
-                                        <Text style={{ fontFamily: fonts.semibold }} className="text-[24px]">{user?.totalCases} Cases</Text>
-                                    </View>
-                                ))}
-                            </View>
                         </>
                     )}
                 </View>
             </ScrollView>
-            {/* <BottomNavigation /> */}
             <DrawerNavigation />
         </SafeAreaView>
     );
